@@ -218,7 +218,7 @@ const NavDrawer = (props) => {
                   onClick={() => navigate("/admin")}
                 >
                   <ListItemIcon>
-                    <Icon fontSize="small">person</Icon>
+                    <Icon fontSize="small">admin_panel_settings</Icon>
                   </ListItemIcon>
                   <ListItemText
                     primary={

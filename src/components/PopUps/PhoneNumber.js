@@ -114,6 +114,8 @@ const PhoneNumber = (props) => {
         setLoading(false);
         return;
       }
+      // if (result.data.message !== "true" && result.data.message !== "false")
+      //   return;
       if (appVerifier) {
         appVerifier.clear();
         document.querySelector(

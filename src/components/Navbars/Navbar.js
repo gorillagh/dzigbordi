@@ -19,9 +19,9 @@ import NavDrawer from "./NavDrawer";
 import Link from "../Links/Link";
 
 const userPages = [
-  { text: "My Next Order", icon: "translate", to: "/languages" },
-  { text: "All Orders", icon: "engineering", to: "/skills" },
-  { text: "Profile", icon: "school", to: "/admission" },
+  { text: "My Next Order", icon: "next_plan", to: "/languages" },
+  { text: "All Orders", icon: "list_alt", to: "/skills" },
+  { text: "Profile", icon: "person", to: "/admission" },
 ];
 
 const pages = [{ text: "About Us", icon: "info", to: "/about" }];
