@@ -104,16 +104,16 @@ const PhoneNumber = (props) => {
         return;
       }
       const validatedPhoneNumber = `+233${phoneNumber.slice(-9)}`;
-      const result = await checkPhoneNumber(validatedPhoneNumber);
-      if (result.data === "false") {
-        props.setAlertSnackbar({
-          open: true,
-          text: "You are not registered on this platform. Contact the administrator!",
-          severity: "error",
-        });
-        setLoading(false);
-        return;
-      }
+      // const result = await checkPhoneNumber(validatedPhoneNumber);
+      // if (result.data === "false") {
+      //   props.setAlertSnackbar({
+      //     open: true,
+      //     text: "You are not registered on this platform. Contact the administrator!",
+      //     severity: "error",
+      //   });
+      //   setLoading(false);
+      //   return;
+      // }
       if (appVerifier) {
         appVerifier.clear();
         document.querySelector(
