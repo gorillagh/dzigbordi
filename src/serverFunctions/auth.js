@@ -1,7 +1,7 @@
 import { api } from "./index";
 
 export const checkPhoneNumber = async (phoneNumber) => {
-  return await api.get(`/check-phonenumber/${phoneNumber}`);
+  return await api.post(`/check-phonenumber`, { phoneNumber });
 };
 
 export const createOrUpdateUser = async (authtoken, data) => {
