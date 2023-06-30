@@ -105,7 +105,7 @@ const PhoneNumber = (props) => {
       }
       const validatedPhoneNumber = `+233${phoneNumber.slice(-9)}`;
       const result = await checkPhoneNumber(validatedPhoneNumber);
-      if (result.data === "false") {
+      if (result.data.message === "false") {
         props.setAlertSnackbar({
           open: true,
           text: "You are not registered on this platform. Contact the administrator!",
