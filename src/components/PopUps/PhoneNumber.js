@@ -162,6 +162,7 @@ const PhoneNumber = (props) => {
     } catch (error) {
       setLoading(false);
       console.log(error);
+      window.alert(error);
     }
   };
 
@@ -391,7 +392,7 @@ const PhoneNumber = (props) => {
                           <Typography variant="body2">
                             Please note that this consent is not a condition of
                             purchase and that you can revoke your consent at any
-                            time. Wuda Lounge will never sell or share your
+                            time. Dzigbordi will never sell or share your
                             personal information with third parties.
                           </Typography>
                         </Box>
