@@ -3,9 +3,9 @@ import Pusher from "pusher-js";
 
 import LoadingToRedirect from "./LoadingToRedirect";
 import { currentAdmin } from "../../serverFunctions/auth";
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import restaurantDetails from "../../restaurantDetails";
-import Navbar from "../Navbars/Navbar";
+import Navbar from "../Navbars/Admin/Navbar";
 
 const AdminRoute = (props) => {
   const [ok, setOk] = useState(false);
@@ -25,30 +25,12 @@ const AdminRoute = (props) => {
     }
   }, [props.user]);
 
-  // useEffect(() => {
-  //   const pusher = new Pusher(process.env.REACT_APP_PUSHER_KEY, {
-  //     cluster: process.env.REACT_APP_PUSHER_CLUSTER,
-  //     encrypted: true,
-  //   });
-  //   const channel = pusher.subscribe("newOrder");
-
-  //   channel.bind("order-placed", (data) => {
-  //     console.log("New message received:", data);
-  //     // Do something with the new message here
-  //   });
-
-  //   return () => {
-  //     pusher.unsubscribe("newOrder");
-  //     pusher.disconnect();
-  //   };
-  // }, []);
-
   return ok ? (
     <Box>
       <Navbar user={props.user} />
 
       {/* <AdminNavBar /> */}
-      {props.children}
+      <Container>{props.children}</Container>
     </Box>
   ) : (
     <LoadingToRedirect

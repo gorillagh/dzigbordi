@@ -1,29 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
+import { auth } from "../../../firebase";
 import { signOut } from "firebase/auth";
 import { useDispatch } from "react-redux";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 
 import Container from "@mui/material/Container";
 
-import LoadingBackdrop from "../Feedbacks/LoadingBackdrop";
+import ActionButton from "../../Buttons/ActionButton";
+
+import LoadingBackdrop from "../../Feedbacks/LoadingBackdrop";
 import NavDrawer from "./NavDrawer";
-import Link from "../Links/Link";
+import Link from "../../Links/Link";
 
+const pages = [{ text: "company", icon: "info", to: "/admin/compnay" }];
 const userPages = [
-  { text: "My Next Order", icon: "next_plan", to: "/languages" },
-  { text: "All Orders", icon: "assignment", to: "/skills" },
-  { text: "Profile", icon: "person", to: "/admission" },
-  { text: "About Us", icon: "info", to: "/about" },
+  // { text: "Profile", icon: "person", to: () => props.setOpenProfile(true) },
+  { text: "Orders", icon: "assignment", to: "/admin/orders" },
+  {
+    text: "Menu",
+    icon: "restaurant_menu",
+    to: "/admin/menu",
+  },
+  {
+    text: "Users",
+    icon: "people",
+    to: "/admin/users",
+  },
+  {
+    text: "Reports",
+    icon: "bug_report",
+    to: "/admin/reports",
+  },
+  {
+    text: "Bank",
+    icon: "business",
+    to: "/admin/bank",
+  },
+
+  // { text: "Logout", icon: "logout", to: "logout" },
 ];
-
-const pages = [{ text: "About Us", icon: "info", to: "/about" }];
-
 function Navbar(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -53,7 +74,11 @@ function Navbar(props) {
       });
     }
   };
+  const handleNavigation = async (to) => {
+    if (to !== "" && to !== "logout") navigate(to);
 
+    to === "logout" && handleSignOut();
+  };
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -84,8 +109,11 @@ function Navbar(props) {
             variant="h4"
             noWrap
             component="a"
-            href="/"
+            onClick={() => {
+              handleNavigation("/admin");
+            }}
             sx={{
+              cursor: "pointer",
               mr: 2,
               display: { xs: "none", md: "flex" },
               fontFamily: "Ubuntu",
@@ -102,7 +130,9 @@ function Navbar(props) {
             variant="h4"
             noWrap
             component="a"
-            href="/"
+            onClick={() => {
+              handleNavigation("/admin");
+            }}
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -126,13 +156,17 @@ function Navbar(props) {
               }}
             >
               {userPages.map((page, index) => (
-                <Link variant="body1" text={page.text} key={index} />
+                <Link
+                  to={page.to}
+                  variant="body1"
+                  text={page.text}
+                  key={index}
+                />
               ))}
             </Box>
           ) : (
             ""
           )}
-
           <Box
             sx={{
               flexGrow: 1,
@@ -142,14 +176,10 @@ function Navbar(props) {
               columnGap: 4,
             }}
           >
-            {props.user.role === "admin" ? (
-              <Link variant="body1" to="/admin" text="Switch" />
-            ) : (
-              ""
-            )}
+            <Link variant="body1" to="/" text="Switch" />
             <Link
               variant="body1"
-              onClick={() => handleSignOut()}
+              onClick={() => handleNavigation("logout")}
               text="logout"
             />
           </Box>
@@ -161,6 +191,7 @@ function Navbar(props) {
             userPages={userPages}
             handleCloseNavMenu={handleCloseNavMenu}
             user={props.user}
+            handleNavigation={handleNavigation}
           />
         </Toolbar>
 

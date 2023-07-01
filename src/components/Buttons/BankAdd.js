@@ -54,7 +54,7 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-export default function MenuAdd(props) {
+export default function BankAdd(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -89,48 +89,20 @@ export default function MenuAdd(props) {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            props.setDishToEdit(null);
-            props.setOpenDish(true);
+            props.setOpenBranchAdd(true);
           }}
           disableRipple
         >
-          Dish
+          Branch
         </MenuItem>
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            props.setOpenDrink(true);
+            props.setOpenDepartmentAdd(true);
           }}
           disableRipple
         >
-          Drink
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
-            props.setOpenCategory(true);
-          }}
-          disableRipple
-        >
-          Category
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
-            props.setOpenSubcategory(true);
-          }}
-          disableRipple
-        >
-          Subcategory
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
-            props.setOpenItem(true);
-          }}
-          disableRipple
-        >
-          Item
+          Department
         </MenuItem>
       </StyledMenu>
     </div>

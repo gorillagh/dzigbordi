@@ -16,9 +16,14 @@ import restaurantDetails from "./restaurantDetails";
 import UserRoute from "./components/Routes/UserRoute";
 import PhoneNumber from "./components/PopUps/PhoneNumber";
 import AdminRoute from "./components/Routes/AdminRoute";
+import Orders from "./pages/Admin/Orders";
+import Menu from "./pages/Admin/Menu";
+import Users from "./pages/Admin/Users";
+import Reports from "./pages/Admin/Reports";
+import Bank from "./pages/Admin/Bank";
 const Footer = lazy(() => import("./components/Footers/Footer"));
 const Home = lazy(() => import("./pages/Home"));
-const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
+const Dashboard = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 let theme = createTheme({
@@ -136,7 +141,7 @@ const App = () => {
           exact
           path="/admin"
           element={
-            <Suspense fallback={LoadingBackdrop}>
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
               {loading ? (
                 ""
               ) : (
@@ -145,7 +150,102 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <AdminDashboard user={user} />
+                  <Dashboard user={user} />
+                </AdminRoute>
+              )}
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/admin/orders"
+          element={
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
+              {loading ? (
+                ""
+              ) : (
+                <AdminRoute
+                  loading={loading}
+                  setOpenPhoneNumber={setOpenPhoneNumber}
+                  user={user}
+                >
+                  <Orders user={user} />
+                </AdminRoute>
+              )}
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/admin/menu"
+          element={
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
+              {loading ? (
+                ""
+              ) : (
+                <AdminRoute
+                  loading={loading}
+                  setOpenPhoneNumber={setOpenPhoneNumber}
+                  user={user}
+                >
+                  <Menu user={user} />
+                </AdminRoute>
+              )}
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/admin/users"
+          element={
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
+              {loading ? (
+                ""
+              ) : (
+                <AdminRoute
+                  loading={loading}
+                  setOpenPhoneNumber={setOpenPhoneNumber}
+                  user={user}
+                >
+                  <Users user={user} />
+                </AdminRoute>
+              )}
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/admin/reports"
+          element={
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
+              {loading ? (
+                ""
+              ) : (
+                <AdminRoute
+                  loading={loading}
+                  setOpenPhoneNumber={setOpenPhoneNumber}
+                  user={user}
+                >
+                  <Reports user={user} />
+                </AdminRoute>
+              )}
+            </Suspense>
+          }
+        />
+        <Route
+          exact
+          path="/admin/bank"
+          element={
+            <Suspense fallback={<LoadingBackdrop open={true} />}>
+              {loading ? (
+                ""
+              ) : (
+                <AdminRoute
+                  loading={loading}
+                  setOpenPhoneNumber={setOpenPhoneNumber}
+                  user={user}
+                >
+                  <Bank setAlertSnackbar={setAlertSnackbar} user={user} />
                 </AdminRoute>
               )}
             </Suspense>

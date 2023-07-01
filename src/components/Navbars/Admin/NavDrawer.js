@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+
 import {
   Box,
   Divider,
@@ -20,14 +16,13 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import ActionButton from "../Buttons/ActionButton";
-import Link from "../Links/Link";
+import Link from "../../Links/Link";
 import Twitter from "@mui/icons-material/Twitter";
 import Facebook from "@mui/icons-material/Facebook";
 import Instagram from "@mui/icons-material/Instagram";
 import WhatsApp from "@mui/icons-material/WhatsApp";
-import Subtitle from "../Typography/Subtitle";
-import restaurantDetails from "../../restaurantDetails";
+import Subtitle from "../../Typography/Subtitle";
+import restaurantDetails from "../../../restaurantDetails";
 
 const NavDrawer = (props) => {
   const navigate = useNavigate();
@@ -100,7 +95,7 @@ const NavDrawer = (props) => {
 
   const drawer = (
     <Box
-      // onClick={handleDrawerToggle}
+      onClick={handleDrawerToggle}
       sx={{
         textAlign: "left",
         pt: "4px",
@@ -172,7 +167,7 @@ const NavDrawer = (props) => {
           ? props.userPages.map((item, index) => (
               <ListItem key={index} disablePadding>
                 <ListItemButton
-                  // onClick={() => item.to()}
+                  onClick={() => props.handleNavigation(item.to)}
                   key={index}
                   sx={{ textAlign: "left" }}
                 >
@@ -210,30 +205,8 @@ const NavDrawer = (props) => {
         )}
         <Box sx={{ display: { xs: "block", md: "none" } }}>
           <Divider sx={{ my: 3 }} />
-          {props.user.role === "admin" ? (
-            <>
-              <ListItem disablePadding>
-                <ListItemButton
-                  sx={{ textAlign: "left" }}
-                  onClick={() => navigate("/admin")}
-                >
-                  <ListItemIcon>
-                    <Icon fontSize="small">admin_panel_settings</Icon>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography fontWeight={500} variant="body2">
-                        Switch to Admin
-                      </Typography>
-                    }
-                  />
-                </ListItemButton>
-              </ListItem>
-            </>
-          ) : (
-            ""
-          )}
-          {/* {props.pages.map((item, index) => (
+
+          {props.pages.map((item, index) => (
             <ListItem key={index} disablePadding>
               <ListItemButton
                 onClick={() => item.to()}
@@ -253,7 +226,30 @@ const NavDrawer = (props) => {
                 />
               </ListItemButton>
             </ListItem>
-          ))} */}
+          ))}
+          {props.user.role === "admin" ? (
+            <>
+              <ListItem disablePadding>
+                <ListItemButton
+                  sx={{ textAlign: "left" }}
+                  onClick={() => navigate("/")}
+                >
+                  <ListItemIcon>
+                    <Icon fontSize="small">admin_panel_settings</Icon>
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography fontWeight={500} variant="body2">
+                        Switch to User
+                      </Typography>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            </>
+          ) : (
+            ""
+          )}
         </Box>
         {props.user ? (
           <Box mt={4}>
@@ -348,7 +344,9 @@ const NavDrawer = (props) => {
       >
         <MenuIcon />
       </IconButton>
-      <Box>
+      <Box
+      // component="nav"
+      >
         <Drawer
           anchor="right"
           variant="temporary"
