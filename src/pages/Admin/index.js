@@ -245,10 +245,7 @@ const Dashboard = (props) => {
 
           {/* ////////////REPORTS SECTION///////////////////////////// */}
           <Grid item xs={6} md={3}>
-            <Box
-              sx={{ ...cardStyle }}
-              onClick={() => navigate("/admin/reports")}
-            >
+            <Box sx={{ ...cardStyle }} onClick={() => navigate("/admin/bank")}>
               <Box
                 display="flex"
                 justifyContent="space-between"

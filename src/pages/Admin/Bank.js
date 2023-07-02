@@ -19,7 +19,7 @@ import BankAdd from "../../components/Buttons/BankAdd";
 import BranchEdit from "../../components/PopUps/Admin/BranchEdit";
 import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
 import DepartmentEdit from "../../components/PopUps/Admin/DepartmentEdit";
-
+import _ from "lodash";
 const cardStyle = {
   p: 2,
   my: 3,
@@ -80,7 +80,7 @@ const Bank = (props) => {
         prevState = [...prevState, res.data];
         return prevState;
       });
-      setBranch({ name: "" });
+      setBranch({ name: "", location: "" });
       setLoading(false);
       props.setAlertSnackbar({
         open: true,
@@ -161,7 +161,7 @@ const Bank = (props) => {
   ////////////////////////Department///////////////////////
   const handleAddDepartment = async (e) => {
     try {
-      setUpdateLoading(true);
+      setLoading(true);
       e.preventDefault();
       const res = await createDepartment(props.user.token, department);
       console.log(res.data);
@@ -174,14 +174,14 @@ const Bank = (props) => {
         return prevState;
       });
       setDepartment({ name: "" });
-      setUpdateLoading(false);
+      setLoading(false);
       props.setAlertSnackbar({
         open: true,
         text: `${res.data.name} department added`,
         severity: "success",
       });
     } catch (error) {
-      setUpdateLoading(false);
+      setLoading(false);
       console.log(error);
     }
   };
@@ -259,7 +259,7 @@ const Bank = (props) => {
         justifyContent="space-between"
       >
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Subtitle my={1} title="Bank Info" />
+          <Subtitle my={1} title="Fidelity Bank" />
         </Box>
         <IconButton size="small" onClick={loadBankSubs}>
           <Icon color="primary" fontSize="small">
@@ -272,7 +272,7 @@ const Bank = (props) => {
         alignItems="center"
         justifyContent="center"
         flexWrap="wrap"
-        gap={1}
+        gap={5}
       >
         <Box>
           <ActionButton
@@ -356,6 +356,23 @@ const Bank = (props) => {
             setBranch((prevState) => ({
               ...prevState,
               name: e.target.value.toLowerCase(),
+            }))
+          }
+        />
+        <TextField
+          size="small"
+          margin="normal"
+          required
+          fullWidth
+          id="item-name"
+          label="Branch location"
+          name="name"
+          autoComplete="name"
+          value={branch.location}
+          onChange={(e) =>
+            setBranch((prevState) => ({
+              ...prevState,
+
               location: e.target.value.toLocaleLowerCase(),
             }))
           }
@@ -365,7 +382,7 @@ const Bank = (props) => {
           text="add"
           type="submit"
           fullWidth={false}
-          disabled={!branch.name}
+          disabled={!branch.name || !branch.location}
           onClick={handleAddBranch}
           // size="small"
         />
@@ -406,7 +423,13 @@ const Bank = (props) => {
           onClick={handleAddDepartment}
         />
       </Box>
+
       <Box>
+        <Box width={{ xs: "100%", md: "70%" }} mx="auto">
+          <Typography fontWeight="bold">
+            {_.startCase(selectedGroup)}
+          </Typography>
+        </Box>
         {displayGroup && displayGroup.length
           ? displayGroup.map((item, index) => (
               <Box
@@ -425,12 +448,12 @@ const Bank = (props) => {
                 >
                   <Box display={{ xs: "block", md: "flex" }} columnGap={5}>
                     <Typography variant="body2" fontWeight={500}>
-                      {item.name}
+                      {_.startCase(item.name)}
                     </Typography>
 
                     {item.location ? (
                       <Typography variant="body2">
-                        Location: {item.location}
+                        Location: {_.startCase(item.location)}
                       </Typography>
                     ) : (
                       ""

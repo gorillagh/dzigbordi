@@ -131,7 +131,7 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <Home user={user} />
+                  <Home setAlertSnackbar={setAlertSnackbar} user={user} />
                 </UserRoute>
               )}
             </Suspense>
@@ -150,7 +150,7 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <Dashboard user={user} />
+                  <Dashboard setAlertSnackbar={setAlertSnackbar} user={user} />
                 </AdminRoute>
               )}
             </Suspense>
@@ -169,7 +169,7 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <Orders user={user} />
+                  <Orders setAlertSnackbar={setAlertSnackbar} user={user} />
                 </AdminRoute>
               )}
             </Suspense>
@@ -188,7 +188,7 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <Menu user={user} />
+                  <Menu setAlertSnackbar={setAlertSnackbar} user={user} />
                 </AdminRoute>
               )}
             </Suspense>
@@ -207,7 +207,7 @@ const App = () => {
                   setOpenPhoneNumber={setOpenPhoneNumber}
                   user={user}
                 >
-                  <Users user={user} />
+                  <Users setAlertSnackbar={setAlertSnackbar} user={user} />
                 </AdminRoute>
               )}
             </Suspense>

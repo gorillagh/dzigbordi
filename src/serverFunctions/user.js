@@ -23,7 +23,7 @@ export const getUser = async (authtoken, id) => {
   );
 };
 
-export const createUser = async (authtoken, data, id) => {
+export const createUser = async (authtoken, data) => {
   return await api.post("/users-create", data, {
     headers: {
       authtoken,

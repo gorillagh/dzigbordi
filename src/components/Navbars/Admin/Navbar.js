@@ -32,11 +32,11 @@ const userPages = [
     icon: "people",
     to: "/admin/users",
   },
-  {
-    text: "Reports",
-    icon: "bug_report",
-    to: "/admin/reports",
-  },
+  // {
+  //   text: "Reports",
+  //   icon: "bug_report",
+  //   to: "/admin/reports",
+  // },
   {
     text: "Bank",
     icon: "business",

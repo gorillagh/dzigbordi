@@ -66,7 +66,10 @@ const BranchEdit = (props) => {
 
               <Box
                 component="form"
-                onSubmit={() => props.handleBranchUpdate(branch)}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  props.handleBranchUpdate(branch);
+                }}
                 noValidate
               >
                 <TextField
