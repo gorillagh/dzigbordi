@@ -15,7 +15,7 @@ import {
 import ActionButton from "../../components/Buttons/ActionButton";
 import Subtitle from "../../components/Typography/Subtitle";
 import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
-import { createUser, getUsers } from "../../serverFunctions/user";
+import { createUser, deleteUser, getUsers } from "../../serverFunctions/user";
 import AddUser from "../../components/Forms/AddUser";
 import { getDepartments } from "../../serverFunctions/department";
 import { getBranches } from "../../serverFunctions/branch";
@@ -36,6 +36,7 @@ const cardStyle = {
 
 const Users = (props) => {
   const [loading, setLoading] = useState(false);
+  const [addUserLoading, setAddUserLoading] = useState(false);
   const [users, setUsers] = useState(null);
   const [userGroups, setUserGroups] = useState([
     { label: "customers", value: "subscriber", count: 0 },
@@ -115,7 +116,7 @@ const Users = (props) => {
       severity: "error",
     });
   };
-  const handleAddUser = async (userDetails) => {
+  const handleAddUser = async (userDetails, handleAddUserSuccess) => {
     // Validate Name
     if (userDetails.name.trim() === "") {
       showValidationError("Name is Required");
@@ -127,6 +128,7 @@ const Users = (props) => {
       showValidationError("Invalid Phone Number");
       return;
     }
+    userDetails.phoneNumber = `+233${userDetails.phoneNumber.slice(-9)}`;
     // Validate Branch
     if (userDetails.branch.trim() === "") {
       // Display an error message or handle the validation error
@@ -145,13 +147,69 @@ const Users = (props) => {
     }
 
     try {
-      setLoading(true);
+      setAddUserLoading(true);
       const res = await createUser(props.user.token, userDetails);
-      console.log(res.data);
-      setLoading(false);
+
+      if (res.data.status === "false") {
+        showValidationError(res.data.message);
+        setAddUserLoading(false);
+        return;
+      }
+      setUsers((prevState) => {
+        let filtered = [];
+        prevState = [...prevState, res.data];
+
+        // Update the count for the corresponding user group
+        const newUserGroups = userGroups.map((userGroup) => {
+          if (userGroup.value === res.data.role) {
+            return {
+              ...userGroup,
+              count: userGroup.count + 1,
+            };
+          }
+          return userGroup;
+        });
+
+        setUserGroups(newUserGroups);
+
+        prevState.forEach((user) => {
+          if (user.role === selectedUserGroup) {
+            filtered.push(user);
+          }
+        });
+        setFilteredUsers(filtered);
+        return prevState;
+      });
+
+      setAddUserLoading(false);
+      handleAddUserSuccess();
     } catch (error) {
+      setAddUserLoading(false);
       console.log(error);
       // Handle the error
+    }
+  };
+
+  const handleDeleteUser = async (user) => {
+    try {
+      if (!window.confirm(`Are you sure you want to delete "${user.name}"`))
+        return;
+
+      setLoading(true);
+      const res = await deleteUser(props.user.token, user._id);
+      if (res.data.status === "ok") {
+        loadUsers();
+
+        setLoading(false);
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
 
@@ -234,7 +292,7 @@ const Users = (props) => {
                 ))}
               </Box>
               <Typography fontWeight="bold">
-                {_.startCase(selectedUserGroup)}
+                {/* {_.startCase(selectedUserGroup)} */}
               </Typography>
               {filteredUsers.length
                 ? filteredUsers.map((user, index) => (
@@ -256,14 +314,14 @@ const Users = (props) => {
                           columnGap={5}
                         >
                           <Typography variant="body2" fontWeight={500}>
-                            {user.name} ({user.phoneNumber})
+                            {_.startCase(user.name)} ({user.phoneNumber})
                           </Typography>
 
                           <Typography variant="body2">
-                            Branch: {user.branch.name}
+                            Branch: {_.startCase(user.branch.name)}
                           </Typography>
                           <Typography variant="body2">
-                            Department: {user.department.name}
+                            Department: {_.startCase(user.department.name)}
                           </Typography>
                           {user.email ? (
                             <Typography variant="body2">
@@ -274,12 +332,16 @@ const Users = (props) => {
                           )}
                         </Box>
                         <Box
-                          display="flex"
+                          display={users.length > 1 ? "flex" : "none"}
                           justifyContent="space-between"
                           alignItems="center"
                           columnGap={3}
                         >
-                          <IconButton size="small" color="error">
+                          <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleDeleteUser(user)}
+                          >
                             <Icon fontSize="small">delete</Icon>
                           </IconButton>
                           <IconButton size="small" color="info">
@@ -318,6 +380,7 @@ const Users = (props) => {
                     departments={departments}
                     branches={branches}
                     handleAddUser={handleAddUser}
+                    addUserLoading={addUserLoading}
                   />
                 </Box>
               ) : (

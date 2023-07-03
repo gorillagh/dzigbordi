@@ -8,8 +8,10 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import ActionButton from "../Buttons/ActionButton";
+import CircularLoading from "../Feedbacks/CircularLoading";
 
 const cardStyle = {
   p: 2,
@@ -55,9 +57,18 @@ const AddUser = (props) => {
 
   const handleAddUser = () => {
     // You can handle the addUser functionality here or pass it to the parent component as a prop
-    props.handleAddUser(userDetails);
+    props.handleAddUser(userDetails, handleAddUserSuccess);
   };
-
+  const handleAddUserSuccess = () => {
+    // Reset the form fields
+    setUserDetails({
+      name: "",
+      phoneNumber: "",
+      branch: "",
+      department: "",
+      role: "subscriber",
+    });
+  };
   return (
     <div>
       <Box
@@ -77,6 +88,7 @@ const AddUser = (props) => {
           placeholder="Name"
           name="name"
           autoComplete="name"
+          disabled={props.addUserLoading}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -101,6 +113,7 @@ const AddUser = (props) => {
           placeholder="Phone Number"
           name="phoneNumber"
           type="tel"
+          disabled={props.addUserLoading}
           value={userDetails.phoneNumber}
           onChange={(e) =>
             setUserDetails((prevState) => ({
@@ -124,6 +137,7 @@ const AddUser = (props) => {
           variant="outlined"
           size="small"
           sx={{ mb: 3, mt: 2 }}
+          disabled={props.addUserLoading}
         >
           <InputLabel id="branch-label">Branch</InputLabel>
           <Select
@@ -139,7 +153,13 @@ const AddUser = (props) => {
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth variant="outlined" size="small" sx={{ mb: 3 }}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{ mb: 3 }}
+          disabled={props.addUserLoading}
+        >
           <InputLabel id="department-label">Department</InputLabel>
           <Select
             labelId="department-label"
@@ -154,7 +174,13 @@ const AddUser = (props) => {
             ))}
           </Select>
         </FormControl>
-        <FormControl fullWidth variant="outlined" size="small" sx={{ mb: 3 }}>
+        <FormControl
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{ mb: 3 }}
+          disabled={props.addUserLoading}
+        >
           <InputLabel id="role-label">Role</InputLabel>
           <Select
             labelId="role-label"
@@ -167,22 +193,30 @@ const AddUser = (props) => {
             <MenuItem value="admin">Admin</MenuItem>
           </Select>
         </FormControl>
-        <ActionButton
-          text="Add User"
-          sx={{
-            fontWeight: "bold",
-            borderRadius: 5,
-            textTransform: "capitalize",
-            color: props.variant !== "contained" ? "" : "#fff",
-            boxShadow: "0.5px 1px 0px rgba(0, 0, 0, 0.2)",
-            backgroundColor: "#E3581C",
-            "&:hover": {
-              backgroundColor: "#E3581C",
-            },
-          }}
-          my={2}
-          onClick={handleAddUser}
-        />
+        <Box my={2} display="flex" justifyContent="center" alignItems="center">
+          {props.addUserLoading ? (
+            <Typography variant="body2" fontWeight={600}>
+              <CircularLoading size={20} thickness={6} />
+            </Typography>
+          ) : (
+            <ActionButton
+              text="Add User"
+              sx={{
+                fontWeight: "bold",
+                borderRadius: 5,
+                textTransform: "capitalize",
+                color: props.variant !== "contained" ? "" : "#fff",
+                boxShadow: "0.5px 1px 0px rgba(0, 0, 0, 0.2)",
+                backgroundColor: "#E3581C",
+                "&:hover": {
+                  backgroundColor: "#E3581C",
+                },
+              }}
+              my={2}
+              onClick={handleAddUser}
+            />
+          )}
+        </Box>
       </Box>
     </div>
   );

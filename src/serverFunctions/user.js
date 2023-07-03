@@ -39,7 +39,7 @@ export const updateUser = async (authtoken, id, data) => {
   });
 };
 
-export const deleteUser = async (authtoken, id, data) => {
+export const deleteUser = async (authtoken, id) => {
   return await api.post(
     `/users-delete/${id}`,
     {},
