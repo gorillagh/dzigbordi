@@ -388,6 +388,7 @@ const Users = (props) => {
                     handleAddUser={handleAddUser}
                     addUserLoading={addUserLoading}
                     setAlertSnackbar={props.setAlertSnackbar}
+                    open={displayAddUser}
                   />
                 </Box>
               ) : (

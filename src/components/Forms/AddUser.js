@@ -9,6 +9,7 @@ import {
   Select,
   TextField,
   Typography,
+  Zoom,
 } from "@mui/material";
 import ActionButton from "../Buttons/ActionButton";
 import CircularLoading from "../Feedbacks/CircularLoading";
@@ -33,6 +34,8 @@ const AddUser = (props) => {
     department: "",
     role: "subscriber",
   });
+
+  const containerRef = React.useRef(null);
 
   const handleDepartmentChange = (e) => {
     setUserDetails((prevState) => ({
@@ -108,153 +111,167 @@ const AddUser = (props) => {
   };
   return (
     <div>
-      <Box
-        component="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleAddUser();
-        }}
-        sx={{ ...cardStyle }}
+      <Zoom
+        container={containerRef.current}
+        appear={true}
+        in={props.open}
+        mountOnEnter
+        unmountOnExit
+        //   timeout={300}
       >
-        <TextField
-          size="small"
-          margin="normal"
-          required
-          fullWidth
-          id="item-name"
-          placeholder="Name"
-          name="name"
-          autoComplete="name"
-          disabled={props.addUserLoading}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Icon fontSize="small">badge</Icon>
-              </InputAdornment>
-            ),
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddUser();
           }}
-          value={userDetails.name}
-          onChange={(e) =>
-            setUserDetails((prevState) => ({
-              ...prevState,
-              name: e.target.value,
-            }))
-          }
-        />
-        <TextField
-          size="small"
-          margin="normal"
-          required
-          fullWidth
-          id="phone-number"
-          placeholder="Phone Number"
-          name="phoneNumber"
-          type="tel"
-          disabled={props.addUserLoading}
-          value={userDetails.phoneNumber}
-          onChange={(e) =>
-            setUserDetails((prevState) => ({
-              ...prevState,
-              phoneNumber: e.target.value,
-            }))
-          }
-          autoComplete="tel"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Icon fontSize="small">phone</Icon>
-              </InputAdornment>
-            ),
-            inputMode: "numeric",
-            pattern: "[0-9]*",
-          }}
-        />
-        <FormControl
-          fullWidth
-          variant="outlined"
-          size="small"
-          sx={{ mb: 3, mt: 2 }}
-          disabled={props.addUserLoading}
+          sx={{ ...cardStyle }}
         >
-          <InputLabel id="branch-label">Branch</InputLabel>
-          <Select
-            labelId="branch-label"
-            value={userDetails.branch}
-            onChange={handleBranchChange}
-            label="Branch"
+          <TextField
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            id="item-name"
+            placeholder="Name"
+            name="name"
+            autoComplete="name"
+            disabled={props.addUserLoading}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Icon fontSize="small">badge</Icon>
+                </InputAdornment>
+              ),
+            }}
+            value={userDetails.name}
+            onChange={(e) =>
+              setUserDetails((prevState) => ({
+                ...prevState,
+                name: e.target.value,
+              }))
+            }
+          />
+          <TextField
+            size="small"
+            margin="normal"
+            required
+            fullWidth
+            id="phone-number"
+            placeholder="Phone Number"
+            name="phoneNumber"
+            type="tel"
+            disabled={props.addUserLoading}
+            value={userDetails.phoneNumber}
+            onChange={(e) =>
+              setUserDetails((prevState) => ({
+                ...prevState,
+                phoneNumber: e.target.value,
+              }))
+            }
+            autoComplete="tel"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Icon fontSize="small">phone</Icon>
+                </InputAdornment>
+              ),
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            }}
+          />
+          <FormControl
+            fullWidth
+            variant="outlined"
+            size="small"
+            sx={{ mb: 3, mt: 2 }}
+            disabled={props.addUserLoading}
           >
-            {props.branches.map((branch) => (
-              <MenuItem key={branch._id} value={branch._id}>
-                {branch.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          fullWidth
-          variant="outlined"
-          size="small"
-          sx={{ mb: 3 }}
-          disabled={props.addUserLoading}
-        >
-          <InputLabel id="department-label">Department</InputLabel>
-          <Select
-            labelId="department-label"
-            value={userDetails.department}
-            onChange={handleDepartmentChange}
-            label="Department"
+            <InputLabel id="branch-label">Branch</InputLabel>
+            <Select
+              labelId="branch-label"
+              value={userDetails.branch}
+              onChange={handleBranchChange}
+              label="Branch"
+            >
+              {props.branches.map((branch) => (
+                <MenuItem key={branch._id} value={branch._id}>
+                  {branch.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
+            fullWidth
+            variant="outlined"
+            size="small"
+            sx={{ mb: 3 }}
+            disabled={props.addUserLoading}
           >
-            {props.departments.map((department) => (
-              <MenuItem key={department._id} value={department._id}>
-                {department.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl
-          fullWidth
-          variant="outlined"
-          size="small"
-          sx={{ mb: 3 }}
-          disabled={props.addUserLoading}
-        >
-          <InputLabel id="role-label">Role</InputLabel>
-          <Select
-            labelId="role-label"
-            value={userDetails.role}
-            onChange={handleRoleChange}
-            label="Role"
+            <InputLabel id="department-label">Department</InputLabel>
+            <Select
+              labelId="department-label"
+              value={userDetails.department}
+              onChange={handleDepartmentChange}
+              label="Department"
+            >
+              {props.departments.map((department) => (
+                <MenuItem key={department._id} value={department._id}>
+                  {department.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
+            fullWidth
+            variant="outlined"
+            size="small"
+            sx={{ mb: 3 }}
+            disabled={props.addUserLoading}
           >
-            <MenuItem value="subscriber">Subscriber</MenuItem>
-            <MenuItem value="staff">Staff</MenuItem>
-            <MenuItem value="admin">Admin</MenuItem>
-          </Select>
-        </FormControl>
-        <Box my={2} display="flex" justifyContent="center" alignItems="center">
-          {props.addUserLoading ? (
-            <Typography variant="body2" fontWeight={600}>
-              <CircularLoading size={20} thickness={6} />
-            </Typography>
-          ) : (
-            <ActionButton
-              text="Add User"
-              sx={{
-                fontWeight: "bold",
-                borderRadius: 5,
-                textTransform: "capitalize",
-                color: props.variant !== "contained" ? "" : "#fff",
-                boxShadow: "0.5px 1px 0px rgba(0, 0, 0, 0.2)",
-                backgroundColor: "#E3581C",
-                "&:hover": {
+            <InputLabel id="role-label">Role</InputLabel>
+            <Select
+              labelId="role-label"
+              value={userDetails.role}
+              onChange={handleRoleChange}
+              label="Role"
+            >
+              <MenuItem value="subscriber">Subscriber</MenuItem>
+              <MenuItem value="staff">Staff</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </Select>
+          </FormControl>
+          <Box
+            my={2}
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {props.addUserLoading ? (
+              <Typography variant="body2" fontWeight={600}>
+                <CircularLoading size={20} thickness={6} />
+              </Typography>
+            ) : (
+              <ActionButton
+                text="Add User"
+                sx={{
+                  fontWeight: "bold",
+                  borderRadius: 5,
+                  textTransform: "capitalize",
+                  color: props.variant !== "contained" ? "" : "#fff",
+                  boxShadow: "0.5px 1px 0px rgba(0, 0, 0, 0.2)",
                   backgroundColor: "#E3581C",
-                },
-              }}
-              my={2}
-              onClick={handleAddUser}
-            />
-          )}
+                  "&:hover": {
+                    backgroundColor: "#E3581C",
+                  },
+                }}
+                my={2}
+                onClick={handleAddUser}
+              />
+            )}
+          </Box>
         </Box>
-      </Box>
+      </Zoom>
     </div>
   );
 };

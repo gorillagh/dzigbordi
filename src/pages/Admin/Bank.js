@@ -259,7 +259,7 @@ const Bank = (props) => {
         justifyContent="space-between"
       >
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Subtitle my={1} title="Fidelity Bank" />
+          <Subtitle my={1} title="Zenith Bank" />
         </Box>
         <IconButton size="small" onClick={loadBankSubs}>
           <Icon color="primary" fontSize="small">
