@@ -20,6 +20,7 @@ import BranchEdit from "../../components/PopUps/Admin/BranchEdit";
 import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
 import DepartmentEdit from "../../components/PopUps/Admin/DepartmentEdit";
 import _ from "lodash";
+import PageTitle from "../../components/Typography/PageTitle";
 const cardStyle = {
   p: 2,
   my: 3,
@@ -259,7 +260,8 @@ const Bank = (props) => {
         justifyContent="space-between"
       >
         <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Subtitle my={1} title="Zenith Bank" />
+          <PageTitle title="Zenith Bank" my={1} />
+          {/* <Subtitle my={1} title="Zenith Bank" /> */}
         </Box>
         <IconButton size="small" onClick={loadBankSubs}>
           <Icon color="primary" fontSize="small">
@@ -431,66 +433,68 @@ const Bank = (props) => {
           </Typography>
         </Box>
         {displayGroup && displayGroup.length
-          ? displayGroup.map((item, index) => (
-              <Box
-                id={index}
-                sx={{
-                  ...cardStyle,
-                }}
-                width={{ xs: "100%", md: "70%" }}
-                mx="auto"
-              >
+          ? displayGroup
+              .sort((a, b) => a.name.localeCompare(b.name)) // Sort the items alphabetically by name
+              .map((item, index) => (
                 <Box
-                  display="flex"
-                  columnGap={1}
-                  justifyContent="space-between"
-                  alignItems="center"
+                  id={index}
+                  sx={{
+                    ...cardStyle,
+                  }}
+                  width={{ xs: "100%", md: "70%" }}
+                  mx="auto"
                 >
-                  <Box display={{ xs: "block", md: "flex" }} columnGap={5}>
-                    <Typography variant="body2" fontWeight={500}>
-                      {_.startCase(item.name)}
-                    </Typography>
-
-                    {item.location ? (
-                      <Typography variant="body2">
-                        Location: {_.startCase(item.location)}
-                      </Typography>
-                    ) : (
-                      ""
-                    )}
-                  </Box>
                   <Box
                     display="flex"
+                    columnGap={1}
                     justifyContent="space-between"
                     alignItems="center"
-                    columnGap={3}
                   >
-                    <IconButton
-                      size="small"
-                      color="error"
-                      onClick={() =>
-                        selectedGroup === "branches"
-                          ? handleBranchDelete(item)
-                          : handleDepartmentDelete(item)
-                      }
+                    <Box display={{ xs: "block", md: "flex" }} columnGap={5}>
+                      <Typography variant="body2" fontWeight={500}>
+                        {_.startCase(item.name)}
+                      </Typography>
+
+                      {item.location ? (
+                        <Typography variant="body2">
+                          Location: {_.startCase(item.location)}
+                        </Typography>
+                      ) : (
+                        ""
+                      )}
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      columnGap={3}
                     >
-                      <Icon fontSize="small">delete</Icon>
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      color="info"
-                      onClick={() =>
-                        selectedGroup === "branches"
-                          ? handleBranchEdit(item)
-                          : handleDepartmentEdit(item)
-                      }
-                    >
-                      <Icon fontSize="small">edit</Icon>
-                    </IconButton>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() =>
+                          selectedGroup === "branches"
+                            ? handleBranchDelete(item)
+                            : handleDepartmentDelete(item)
+                        }
+                      >
+                        <Icon fontSize="small">delete</Icon>
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="info"
+                        onClick={() =>
+                          selectedGroup === "branches"
+                            ? handleBranchEdit(item)
+                            : handleDepartmentEdit(item)
+                        }
+                      >
+                        <Icon fontSize="small">edit</Icon>
+                      </IconButton>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
-            ))
+              ))
           : ""}
       </Box>
       {selectedBranch ? (

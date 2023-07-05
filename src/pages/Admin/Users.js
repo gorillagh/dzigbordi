@@ -26,6 +26,7 @@ import { getDepartments } from "../../serverFunctions/department";
 import { getBranches } from "../../serverFunctions/branch";
 import _ from "lodash";
 import UserEdit from "../../components/PopUps/Admin/UserEdit";
+import PageTitle from "../../components/Typography/PageTitle";
 
 const cardStyle = {
   p: 2,
@@ -232,7 +233,7 @@ const Users = (props) => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Subtitle my={1} title="Users" />
+            <PageTitle my={1} title="Users" />
             <IconButton size="small" onClick={loadUsers}>
               <Icon color="primary" fontSize="small">
                 refresh
@@ -289,74 +290,76 @@ const Users = (props) => {
                 {/* {_.startCase(selectedUserGroup)} */}
               </Typography>
               {users && users[selectedUserGroup]
-                ? users[selectedUserGroup].map((user, index) => (
-                    <Box
-                      id={index}
-                      sx={{
-                        ...cardStyle,
-                      }}
-                    >
+                ? users[selectedUserGroup]
+                    .sort((a, b) => a.name.localeCompare(b.name)) // Sort the users alphabetically by name
+                    .map((user, index) => (
                       <Box
-                        display="flex"
-                        columnGap={1}
-                        justifyContent="space-between"
-                        alignItems="center"
+                        id={index}
+                        sx={{
+                          ...cardStyle,
+                        }}
                       >
                         <Box
-                          display={{ xs: "block", md: "flex" }}
-                          columnGap={5}
-                        >
-                          <Typography variant="body2" fontWeight={500}>
-                            {_.startCase(user.name)} ({user.phoneNumber})
-                          </Typography>
-
-                          <Typography variant="body2">
-                            Branch:{" "}
-                            {_.startCase(user.branch && user.branch.name)}
-                          </Typography>
-                          <Typography variant="body2">
-                            Department:{" "}
-                            {_.startCase(
-                              user.department && user.department.name
-                            )}
-                          </Typography>
-                          {user.email ? (
-                            <Typography variant="body2">
-                              Email: {user.email}
-                            </Typography>
-                          ) : (
-                            ""
-                          )}
-                        </Box>
-                        <Box
-                          display={
-                            user.phoneNumber === "+233240298910"
-                              ? "none"
-                              : "flex"
-                          }
+                          display="flex"
+                          columnGap={1}
                           justifyContent="space-between"
                           alignItems="center"
-                          columnGap={3}
                         >
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDeleteUser(user)}
+                          <Box
+                            display={{ xs: "block", md: "flex" }}
+                            columnGap={5}
                           >
-                            <Icon fontSize="small">delete</Icon>
-                          </IconButton>
+                            <Typography variant="body2" fontWeight={500}>
+                              {_.startCase(user.name)} ({user.phoneNumber})
+                            </Typography>
 
-                          <IconButton
-                            size="small"
-                            color="info"
-                            onClick={() => handleOpenEditUser(user)}
+                            <Typography variant="body2">
+                              Branch:{" "}
+                              {_.startCase(user.branch && user.branch.name)}
+                            </Typography>
+                            <Typography variant="body2">
+                              Department:{" "}
+                              {_.startCase(
+                                user.department && user.department.name
+                              )}
+                            </Typography>
+                            {user.email ? (
+                              <Typography variant="body2">
+                                Email: {user.email}
+                              </Typography>
+                            ) : (
+                              ""
+                            )}
+                          </Box>
+                          <Box
+                            display={
+                              user.phoneNumber === "+233240298910"
+                                ? "none"
+                                : "flex"
+                            }
+                            justifyContent="space-between"
+                            alignItems="center"
+                            columnGap={3}
                           >
-                            <Icon fontSize="small">edit</Icon>
-                          </IconButton>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDeleteUser(user)}
+                            >
+                              <Icon fontSize="small">delete</Icon>
+                            </IconButton>
+
+                            <IconButton
+                              size="small"
+                              color="info"
+                              onClick={() => handleOpenEditUser(user)}
+                            >
+                              <Icon fontSize="small">edit</Icon>
+                            </IconButton>
+                          </Box>
                         </Box>
                       </Box>
-                    </Box>
-                  ))
+                    ))
                 : ""}
             </Grid>
             <Grid item xs={12} md={4} px={{ md: 5 }}>
