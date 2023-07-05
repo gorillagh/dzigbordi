@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   FormControl,
@@ -55,7 +55,44 @@ const AddUser = (props) => {
     }));
   };
 
-  const handleAddUser = () => {
+  const showValidationError = (text) => {
+    props.setAlertSnackbar({
+      open: true,
+      text,
+      severity: "error",
+    });
+  };
+
+  const handleAddUser = (e) => {
+    e.preventDefault();
+    // Validate Name
+    if (userDetails.name.trim() === "") {
+      showValidationError("Name is Required");
+      return;
+    }
+    // Validate Phone Number
+    const phoneNumberRegex = /^\d{10}$/;
+    if (!phoneNumberRegex.test(userDetails.phoneNumber)) {
+      showValidationError("Invalid Phone Number");
+      return;
+    }
+    userDetails.phoneNumber = `+233${userDetails.phoneNumber.slice(-9)}`;
+    // Validate Branch
+    if (userDetails.branch.trim() === "") {
+      // Display an error message or handle the validation error
+      showValidationError("Branch is required");
+      return;
+    }
+    // Validate Department
+    if (userDetails.department.trim() === "") {
+      showValidationError("Department is required");
+      return;
+    }
+    // Validate Role
+    if (userDetails.role.trim() === "") {
+      showValidationError("Role is required");
+      return;
+    }
     // You can handle the addUser functionality here or pass it to the parent component as a prop
     props.handleAddUser(userDetails, handleAddUserSuccess);
   };

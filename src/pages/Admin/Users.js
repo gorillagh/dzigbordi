@@ -15,11 +15,17 @@ import {
 import ActionButton from "../../components/Buttons/ActionButton";
 import Subtitle from "../../components/Typography/Subtitle";
 import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
-import { createUser, deleteUser, getUsers } from "../../serverFunctions/user";
+import {
+  createUser,
+  deleteUser,
+  getUsers,
+  updateUser,
+} from "../../serverFunctions/user";
 import AddUser from "../../components/Forms/AddUser";
 import { getDepartments } from "../../serverFunctions/department";
 import { getBranches } from "../../serverFunctions/branch";
 import _ from "lodash";
+import UserEdit from "../../components/PopUps/Admin/UserEdit";
 
 const cardStyle = {
   p: 2,
@@ -52,6 +58,8 @@ const Users = (props) => {
 
   const [displayAddUser, setDisplayAddUser] = useState(true);
 
+  const [openUserEdit, setOpenUserEdit] = useState(false);
+
   const loadBankInfo = async () => {
     const res1 = await getDepartments(props.user.token);
     const res2 = await getBranches(props.user.token);
@@ -59,27 +67,13 @@ const Users = (props) => {
     setBranches(res2.data);
   };
 
-  const loadUsers = async () => {
+  const loadUsers = async (selectedRole) => {
     setLoading(true);
-    setSelectedUserGroup("subscriber");
+    setSelectedUserGroup(selectedRole);
     try {
       const res = await getUsers(props.user.token);
       setUsers(res.data);
 
-      /////set count/////////
-      let newUserGroups = [...userGroups];
-      newUserGroups.forEach((userGroup, index) => {
-        let count = res.data.filter(
-          (user) => user.role === userGroup.value
-        ).length;
-        newUserGroups[index].count = count;
-      });
-      let filtered = [];
-      setUserGroups(newUserGroups);
-      res.data.map((user) => {
-        if (user.role === "subscriber") filtered.push(user);
-      });
-      setFilteredUsers(filtered);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -88,101 +82,87 @@ const Users = (props) => {
   };
 
   useEffect(() => {
-    loadUsers();
+    loadUsers("subscriber");
     loadBankInfo();
   }, []);
 
-  const handleUserGroupFilter = (value) => {
-    let filtered = [];
-    if (users && users.length) {
-      setSelectedUserGroup(value);
-
-      users.map((user) => {
-        if (user.role === value) filtered.push(user);
-      });
-      setFilteredUsers(filtered);
-    }
-  };
-
-  const handleUserSelected = (user) => {
-    setSelectedUser(user);
-    setOpenUser(true);
-  };
-
-  const showValidationError = (text) => {
-    props.setAlertSnackbar({
-      open: true,
-      text,
-      severity: "error",
-    });
-  };
   const handleAddUser = async (userDetails, handleAddUserSuccess) => {
-    // Validate Name
-    if (userDetails.name.trim() === "") {
-      showValidationError("Name is Required");
-      return;
-    }
-    // Validate Phone Number
-    const phoneNumberRegex = /^\d{10}$/;
-    if (!phoneNumberRegex.test(userDetails.phoneNumber)) {
-      showValidationError("Invalid Phone Number");
-      return;
-    }
-    userDetails.phoneNumber = `+233${userDetails.phoneNumber.slice(-9)}`;
-    // Validate Branch
-    if (userDetails.branch.trim() === "") {
-      // Display an error message or handle the validation error
-      showValidationError("Branch is required");
-      return;
-    }
-    // Validate Department
-    if (userDetails.department.trim() === "") {
-      showValidationError("Department is required");
-      return;
-    }
-    // Validate Role
-    if (userDetails.role.trim() === "") {
-      showValidationError("Role is required");
-      return;
-    }
-
     try {
       setAddUserLoading(true);
       const res = await createUser(props.user.token, userDetails);
 
       if (res.data.status === "false") {
-        showValidationError(res.data.message);
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        userDetails.phoneNumber = `0${userDetails.phoneNumber.slice(-9)}`;
         setAddUserLoading(false);
         return;
       }
+
       setUsers((prevState) => {
-        let filtered = [];
-        prevState = [...prevState, res.data];
+        const newUser = res.data;
+        const updatedUsers = { ...prevState };
 
-        // Update the count for the corresponding user group
-        const newUserGroups = userGroups.map((userGroup) => {
-          if (userGroup.value === res.data.role) {
-            return {
-              ...userGroup,
-              count: userGroup.count + 1,
-            };
-          }
-          return userGroup;
-        });
+        if (updatedUsers.hasOwnProperty(newUser.role)) {
+          updatedUsers[newUser.role].push(newUser);
+        } else {
+          updatedUsers[newUser.role] = [newUser];
+        }
 
-        setUserGroups(newUserGroups);
-
-        prevState.forEach((user) => {
-          if (user.role === selectedUserGroup) {
-            filtered.push(user);
-          }
-        });
-        setFilteredUsers(filtered);
-        return prevState;
+        return { ...updatedUsers };
       });
 
       setAddUserLoading(false);
+      props.setAlertSnackbar({
+        open: true,
+        text: `${res.data.name} added`,
+        severity: "success",
+      });
       handleAddUserSuccess();
+    } catch (error) {
+      setAddUserLoading(false);
+      console.log(error);
+      // Handle the error
+    }
+  };
+
+  const handleOpenEditUser = (user) => {
+    setSelectedUser(user);
+    setOpenUserEdit(true);
+  };
+
+  const handleEditUser = async (selectedUser, handleEditUserSuccess) => {
+    try {
+      setAddUserLoading(true);
+
+      // Make the API call to update the user
+      const res = await updateUser(
+        props.user.token,
+        selectedUser._id,
+        selectedUser
+      );
+
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        selectedUser.phoneNumber = `0${selectedUser.phoneNumber.slice(-9)}`;
+        setAddUserLoading(false);
+        return;
+      }
+      props.setAlertSnackbar({
+        open: true,
+        text: `${res.data.name} updated`,
+        severity: "success",
+      });
+      setAddUserLoading(false);
+      loadUsers(res.data.role);
+      handleEditUserSuccess();
     } catch (error) {
       setAddUserLoading(false);
       console.log(error);
@@ -198,7 +178,32 @@ const Users = (props) => {
       setLoading(true);
       const res = await deleteUser(props.user.token, user._id);
       if (res.data.status === "ok") {
-        loadUsers();
+        setUsers((prevState) => {
+          // Create a copy of the users object
+          const updatedUsers = { ...prevState };
+
+          // Find the array corresponding to the user's role in the copied object
+          const roleArray = updatedUsers[user.role];
+
+          // Find the index of the user in the role array based on their _id
+          const userIndex = roleArray.findIndex((u) => u._id === user._id);
+
+          if (userIndex !== -1) {
+            // Create a copy of the role array
+            const updatedRoleArray = [...roleArray];
+
+            // Remove the user from the role array using the index
+            updatedRoleArray.splice(userIndex, 1);
+
+            // Replace the old role array with the updated role array in the copied object
+            updatedUsers[user.role] = updatedRoleArray;
+
+            // Set the updated object as the new state
+            return updatedUsers;
+          }
+
+          return prevState; // If the user is not found, return the previous state unchanged
+        });
 
         setLoading(false);
         props.setAlertSnackbar({
@@ -234,14 +239,6 @@ const Users = (props) => {
               </Icon>
             </IconButton>
           </Box>
-          <ActionButton
-            text="Add"
-            leftIcon="add"
-            fullWidth={false}
-            my={0}
-            variant="outlined"
-            size="small"
-          />
         </Box>
 
         <Box>
@@ -258,50 +255,46 @@ const Users = (props) => {
                 flexWrap="wrap"
                 gap={1}
               >
-                {userGroups.map((userGroup, index) => (
-                  <Box key={index}>
-                    <ActionButton
-                      text={`${userGroup.label} (${userGroup.count})`}
-                      variant=""
-                      sx={{
-                        textTransform: "capitalize",
-                        py: 0,
-                        fontSize: "0.85rem",
-                        boxShadow:
-                          "inset 0 0 0 1px rgba(16,22,26,.05), inset 0 -1px 0 rgba(16,22,26,.2)",
-                        bgcolor:
-                          selectedUserGroup === userGroup.value
-                            ? "#fee5b9"
-                            : "#fff",
-                        fontWeight:
-                          selectedUserGroup === userGroup.value ? 700 : "400",
-                        color:
-                          selectedUserGroup === userGroup.value
-                            ? "primary.main"
-                            : "",
-                        my: 1,
-                        "&:hover": {
-                          bgcolor: "#fee5b9",
-                        },
-                      }}
-                      fullWidth={false}
-                      size="small"
-                      onClick={() => handleUserGroupFilter(userGroup.value)}
-                    />
-                  </Box>
-                ))}
+                {users &&
+                  Object.entries(users).map(([key, value]) => (
+                    <Box key={key}>
+                      <ActionButton
+                        text={`${key} (${value.length})`}
+                        variant=""
+                        sx={{
+                          textTransform: "capitalize",
+                          py: 0,
+                          fontSize: "0.85rem",
+                          boxShadow:
+                            "inset 0 0 0 1px rgba(16,22,26,.05), inset 0 -1px 0 rgba(16,22,26,.2)",
+                          bgcolor:
+                            selectedUserGroup === key ? "#fee5b9" : "#fff",
+                          fontWeight: selectedUserGroup === key ? 700 : "400",
+                          color:
+                            selectedUserGroup === key ? "primary.main" : "",
+                          my: 1,
+                          "&:hover": {
+                            bgcolor: "#fee5b9",
+                          },
+                        }}
+                        fullWidth={false}
+                        size="small"
+                        onClick={() => setSelectedUserGroup(key)}
+                      />
+                    </Box>
+                  ))}
               </Box>
+
               <Typography fontWeight="bold">
                 {/* {_.startCase(selectedUserGroup)} */}
               </Typography>
-              {filteredUsers.length
-                ? filteredUsers.map((user, index) => (
+              {users && users[selectedUserGroup]
+                ? users[selectedUserGroup].map((user, index) => (
                     <Box
                       id={index}
                       sx={{
                         ...cardStyle,
                       }}
-                      onClick={() => handleUserSelected(user)}
                     >
                       <Box
                         display="flex"
@@ -318,10 +311,14 @@ const Users = (props) => {
                           </Typography>
 
                           <Typography variant="body2">
-                            Branch: {_.startCase(user.branch.name)}
+                            Branch:{" "}
+                            {_.startCase(user.branch && user.branch.name)}
                           </Typography>
                           <Typography variant="body2">
-                            Department: {_.startCase(user.department.name)}
+                            Department:{" "}
+                            {_.startCase(
+                              user.department && user.department.name
+                            )}
                           </Typography>
                           {user.email ? (
                             <Typography variant="body2">
@@ -332,7 +329,11 @@ const Users = (props) => {
                           )}
                         </Box>
                         <Box
-                          display={users.length > 1 ? "flex" : "none"}
+                          display={
+                            user.phoneNumber === "+233240298910"
+                              ? "none"
+                              : "flex"
+                          }
                           justifyContent="space-between"
                           alignItems="center"
                           columnGap={3}
@@ -344,7 +345,12 @@ const Users = (props) => {
                           >
                             <Icon fontSize="small">delete</Icon>
                           </IconButton>
-                          <IconButton size="small" color="info">
+
+                          <IconButton
+                            size="small"
+                            color="info"
+                            onClick={() => handleOpenEditUser(user)}
+                          >
                             <Icon fontSize="small">edit</Icon>
                           </IconButton>
                         </Box>
@@ -381,6 +387,7 @@ const Users = (props) => {
                     branches={branches}
                     handleAddUser={handleAddUser}
                     addUserLoading={addUserLoading}
+                    setAlertSnackbar={props.setAlertSnackbar}
                   />
                 </Box>
               ) : (
@@ -390,6 +397,23 @@ const Users = (props) => {
           </Grid>
         </Box>
       </Box>
+      {selectedUser ? (
+        <UserEdit
+          open={openUserEdit}
+          onClose={() => {
+            setSelectedUser(null);
+            setOpenUserEdit(false);
+          }}
+          user={selectedUser}
+          departments={departments}
+          branches={branches}
+          handleEditUser={handleEditUser}
+          addUserLoading={addUserLoading}
+          setAlertSnackbar={props.setAlertSnackbar}
+        />
+      ) : (
+        ""
+      )}
       <LoadingBackdrop open={loading} />
       {/* {selectedUser ? (
         <User
