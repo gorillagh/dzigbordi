@@ -1,11 +1,15 @@
 import { api } from "./index";
 
-export const getDishes = async (data, authtoken) => {
-  return await api.post("/dishes", data, {
-    headers: {
-      authtoken,
-    },
-  });
+export const getDishes = async (authtoken) => {
+  return await api.post(
+    "/dishes",
+    {},
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
 };
 
 export const getDish = async (id, authtoken) => {
@@ -20,7 +24,7 @@ export const getDish = async (id, authtoken) => {
   );
 };
 
-export const createDish = async (id, data, authtoken) => {
+export const createDish = async (data, authtoken) => {
   return await api.post("/dishes-create", data, {
     headers: {
       authtoken,

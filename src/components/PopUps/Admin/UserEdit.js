@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import {
@@ -36,26 +36,30 @@ const UserEdit = (props) => {
     ...props.user,
     phoneNumber: `0${props.user.phoneNumber.slice(-9)}`,
   });
-  //     name: props.user.name,
-  //     phoneNumber: `0${props.user.phoneNumber.slice(-9)}`,
-  //     branch: props.user.branch,
-  //     department: props.user.department,
-  //     role: props.user.role,
-  //   });
 
   const containerRef = React.useRef(null);
 
+  useEffect(() => console.log(props.branches));
+
   const handleDepartmentChange = (e) => {
+    const selectedDepartmentId = e.target.value;
+    const selectedDepartment = props.departments.find(
+      (department) => department._id === selectedDepartmentId
+    );
     setSelectedUser((prevState) => ({
       ...prevState,
-      department: e.target.value,
+      department: selectedDepartment,
     }));
   };
 
   const handleBranchChange = (e) => {
+    const selectedBranchId = e.target.value;
+    const selectedBranch = props.branches.find(
+      (branch) => branch._id === selectedBranchId
+    );
     setSelectedUser((prevState) => ({
       ...prevState,
-      branch: e.target.value,
+      branch: selectedBranch,
     }));
   };
 
@@ -229,7 +233,7 @@ const UserEdit = (props) => {
                   <InputLabel id="branch-label">Branch</InputLabel>
                   <Select
                     labelId="branch-label"
-                    value={selectedUser.branch && selectedUser.branch._id}
+                    value={selectedUser.branch._id}
                     onChange={handleBranchChange}
                     label="Branch"
                   >

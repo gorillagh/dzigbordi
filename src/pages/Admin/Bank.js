@@ -451,7 +451,7 @@ const Bank = (props) => {
                     alignItems="center"
                   >
                     <Box display={{ xs: "block", md: "flex" }} columnGap={5}>
-                      <Typography variant="body2" fontWeight={500}>
+                      <Typography fontWeight={500}>
                         {_.startCase(item.name)}
                       </Typography>
 

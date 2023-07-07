@@ -309,7 +309,7 @@ const Users = (props) => {
                             display={{ xs: "block", md: "flex" }}
                             columnGap={5}
                           >
-                            <Typography variant="body2" fontWeight={500}>
+                            <Typography fontWeight={500}>
                               {_.startCase(user.name)} ({user.phoneNumber})
                             </Typography>
 
@@ -401,7 +401,11 @@ const Users = (props) => {
           </Grid>
         </Box>
       </Box>
-      {selectedUser ? (
+      {selectedUser &&
+      departments &&
+      departments.length &&
+      branches &&
+      branches.length ? (
         <UserEdit
           open={openUserEdit}
           onClose={() => {

@@ -1,11 +1,15 @@
 import { api } from "./index";
 
-export const getMenues = async (data, authtoken) => {
-  return await api.post("/menus", data, {
-    headers: {
-      authtoken,
-    },
-  });
+export const getMenus = async (authtoken) => {
+  return await api.post(
+    "/menus",
+    {},
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
 };
 
 export const getMenu = async (id, authtoken) => {

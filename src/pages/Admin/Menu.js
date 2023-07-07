@@ -1,10 +1,26 @@
-import { Box, Grid, Icon, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  FormControlLabel,
+  Grid,
+  Icon,
+  IconButton,
+  Radio,
+  RadioGroup,
+  Switch,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "../../components/Typography/PageTitle";
 import ActionButton from "../../components/Buttons/ActionButton";
 import _ from "lodash";
 import Subtitle from "../../components/Typography/Subtitle";
+import AddDish from "../../components/Forms/AddDish";
+import { getMenus } from "../../serverFunctions/menu";
+import { getDishes } from "../../serverFunctions/dish";
+import { getCategories } from "../../serverFunctions/category";
+import Categories from "../../components/Forms/Categories";
 
 const cardStyle = {
   p: 2,
@@ -109,16 +125,54 @@ const test = {
       category: "",
     },
   ],
+  all: [
+    {
+      image:
+        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
+      name: "Yam Chips With Grilled Turkey",
+      code: "dz007",
+      daysServed: ["Monday", "Friday"],
+      category: "",
+    },
+    {
+      image:
+        "https://images.bolt.eu/store/2021/2021-03-18/a4bf0ca0-b9bb-4693-9c30-099aa251451a.jpeg",
+      name: "Yam Chips With Grilled Pork",
+      code: "dz008",
+      daysServed: ["Monday", "Friday"],
+      category: "",
+    },
+  ],
 };
 
 const Menu = (props) => {
   const [loading, setLoading] = useState(false);
-  const [menus, setMenus] = useState(test);
+  const [addDishLoading, setAddDishLoading] = useState(false);
+  const [menus, setMenus] = useState({ all: [], ...test });
+  const [categories, setCategories] = useState(["Yam", "Banku", "Kenkey"]);
+  const [openCategories, setOpenCategories] = useState(false);
   const [selectedMenuGroup, setSelectedMenuGroup] = useState("all");
+  const [addType, setAddType] = useState("categories");
+  const [displayAdd, setDisplayAdd] = useState(true);
 
   const navigate = useNavigate();
 
-  const loadMenu = async () => {};
+  const loadMenus = async () => {
+    const res1 = await getMenus(props.user.token);
+    const res2 = await getDishes(props.user.token);
+    setMenus({ all: [...res2.data], ...res1.data });
+  };
+  const loadCategories = async () => {
+    const res = await getCategories(props.user.token);
+    setCategories(res.data);
+  };
+
+  useEffect(() => {
+    // loadMenus()
+    // loadCategories()
+  }, []);
+
+  const handleAddDish = async () => {};
 
   return (
     <div>
@@ -135,7 +189,7 @@ const Menu = (props) => {
             justifyContent="space-between"
           >
             <PageTitle my={1} title="Menu" />
-            <IconButton size="small" onClick={loadMenu}>
+            <IconButton size="small" onClick={loadMenus}>
               <Icon color="primary" fontSize="small">
                 refresh
               </Icon>
@@ -148,7 +202,7 @@ const Menu = (props) => {
             spacing={{ xs: 2, md: 5 }}
             flexDirection={{ xs: "column-reverse", md: "initial" }}
           >
-            <Grid item xs={12} md={8} px={{ md: 5 }}>
+            <Grid item xs={12} md={7} px={{ md: 5 }}>
               <Box
                 display="flex"
                 alignItems="center"
@@ -156,27 +210,6 @@ const Menu = (props) => {
                 flexWrap="wrap"
                 gap={1}
               >
-                <ActionButton
-                  text={`All (${5})`}
-                  variant=""
-                  sx={{
-                    textTransform: "capitalize",
-                    py: 0,
-                    fontSize: "0.85rem",
-                    boxShadow:
-                      "inset 0 0 0 1px rgba(16,22,26,.05), inset 0 -1px 0 rgba(16,22,26,.2)",
-                    bgcolor: selectedMenuGroup === "all" ? "#fee5b9" : "#fff",
-                    fontWeight: selectedMenuGroup === "all" ? 700 : "400",
-                    color: selectedMenuGroup === "all" ? "primary.main" : "",
-                    my: 1,
-                    "&:hover": {
-                      bgcolor: "#fee5b9",
-                    },
-                  }}
-                  fullWidth={false}
-                  size="small"
-                  onClick={() => setSelectedMenuGroup("all")}
-                />
                 {menus &&
                   Object.entries(menus).map(([key, value]) => (
                     <Box key={key}>
@@ -254,7 +287,7 @@ const Menu = (props) => {
                                 justifyContent="center"
                               >
                                 {" "}
-                                <Typography variant="body2" fontWeight={500}>
+                                <Typography variant="body1" fontWeight={500}>
                                   {_.startCase(dish.name)}
                                 </Typography>
                                 <Typography variant="body2">
@@ -270,6 +303,12 @@ const Menu = (props) => {
                               justifyContent="space-between"
                               alignItems="center"
                               columnGap={3}
+                              rowGap={3}
+                              flexDirection={{
+                                xs: "column-reverse",
+                                md: "initial",
+                              }}
+                              ml={{ xs: 2, md: 0 }}
                             >
                               <IconButton
                                 size="small"
@@ -291,6 +330,68 @@ const Menu = (props) => {
                         </Box>
                       ))
                   : ""}
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={5} px={{ md: 5 }}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    size="small"
+                    defaultChecked
+                    onChange={(e) => setDisplayAdd(e.target.checked)}
+                  />
+                }
+                label="ADD"
+              />
+              <Box display={displayAdd ? "block" : "none"}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  flexWrap="wrap"
+                  gap={1}
+                >
+                  <FormControl>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      name="row-radio-buttons-group"
+                      onChange={(e) => setAddType(e.target.value)}
+                    >
+                      <FormControlLabel
+                        value="categories"
+                        control={<Radio size="small" />}
+                        label="Categories"
+                      />
+                      <FormControlLabel
+                        value="dish"
+                        control={<Radio size="small" />}
+                        label="Add Dish"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Box>
+                {categories && categories.length ? (
+                  <Box>
+                    <Box display={addType === "dish" ? "block" : "none"}>
+                      <AddDish
+                        categories={categories}
+                        handleAddUser={handleAddDish}
+                        addUserLoading={addDishLoading}
+                        setAlertSnackbar={props.setAlertSnackbar}
+                        open={addType === "dish"}
+                      />
+                    </Box>
+                    <Box display={addType === "categories" ? "block" : "none"}>
+                      <Categories
+                        categories={categories}
+                        open={addType === "categories"}
+                      />
+                    </Box>
+                  </Box>
+                ) : (
+                  ""
+                )}
               </Box>
             </Grid>
           </Grid>
