@@ -31,6 +31,9 @@ const cardStyle = {
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)",
   webkitBackdropFilter: "blur(5px)",
   boxSizing: "border-box",
+  "&:hover": {
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+  },
 };
 
 const Bank = (props) => {
@@ -72,7 +75,15 @@ const Bank = (props) => {
       setLoading(true);
       e.preventDefault();
       const res = await createBranch(props.user.token, branch);
-      console.log(res.data);
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setLoading(false);
+        return;
+      }
       setBranches((prevState) => {
         prevState = [...prevState, res.data];
         return prevState;
@@ -134,7 +145,15 @@ const Bank = (props) => {
     try {
       setUpdateLoading(true);
       const res = await updateBranch(props.user.token, branch._id, branch);
-      console.log(res.data);
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setUpdateLoading(false);
+        return;
+      }
       const updatedBranchIndex = branches.findIndex(
         (b) => b._id === branch._id
       );
@@ -165,7 +184,15 @@ const Bank = (props) => {
       setLoading(true);
       e.preventDefault();
       const res = await createDepartment(props.user.token, department);
-      console.log(res.data);
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setLoading(false);
+        return;
+      }
       setDepartments((prevState) => {
         prevState = [...prevState, res.data];
         return prevState;
@@ -222,10 +249,23 @@ const Bank = (props) => {
     setOpenDepartmentEdit(true);
   };
 
-  const handleDepartmentUpdate = async (branch) => {
+  const handleDepartmentUpdate = async (department) => {
     try {
       setUpdateLoading(true);
-      const res = await updateDepartment(props.user.token, branch._id, branch);
+      const res = await updateDepartment(
+        props.user.token,
+        department._id,
+        department
+      );
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setUpdateLoading(false);
+        return;
+      }
       console.log(res.data);
       const updatedDepartmentIndex = departments.findIndex(
         (b) => b._id === branch._id

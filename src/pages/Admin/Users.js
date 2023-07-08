@@ -38,7 +38,9 @@ const cardStyle = {
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)",
   webkitBackdropFilter: "blur(5px)",
   boxSizing: "border-box",
-  // cursor: "pointer",
+  "&:hover": {
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+  },
 };
 
 const Users = (props) => {

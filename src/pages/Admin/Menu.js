@@ -32,7 +32,9 @@ const cardStyle = {
   boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)",
   webkitBackdropFilter: "blur(5px)",
   boxSizing: "border-box",
-  // cursor: "pointer",
+  "&:hover": {
+    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+  },
 };
 
 const test = {
@@ -149,7 +151,7 @@ const Menu = (props) => {
   const [loading, setLoading] = useState(false);
   const [addDishLoading, setAddDishLoading] = useState(false);
   const [menus, setMenus] = useState({ all: [], ...test });
-  const [categories, setCategories] = useState(["Yam", "Banku", "Kenkey"]);
+  const [categories, setCategories] = useState(null);
   const [openCategories, setOpenCategories] = useState(false);
   const [selectedMenuGroup, setSelectedMenuGroup] = useState("all");
   const [addType, setAddType] = useState("categories");
@@ -168,8 +170,8 @@ const Menu = (props) => {
   };
 
   useEffect(() => {
-    // loadMenus()
-    // loadCategories()
+    // loadMenus();
+    loadCategories();
   }, []);
 
   const handleAddDish = async () => {};
@@ -256,6 +258,7 @@ const Menu = (props) => {
                       .sort((a, b) => a.code.localeCompare(b.code)) // Sort the dishes alphabetically by name
                       .map((dish, index) => (
                         <Box
+                          key={index}
                           id={index}
                           sx={{
                             ...cardStyle,
@@ -357,6 +360,7 @@ const Menu = (props) => {
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
                       onChange={(e) => setAddType(e.target.value)}
+                      defaultValue="dish"
                     >
                       <FormControlLabel
                         value="categories"
@@ -386,6 +390,8 @@ const Menu = (props) => {
                       <Categories
                         categories={categories}
                         open={addType === "categories"}
+                        user={props.user}
+                        setAlertSnackbar={props.setAlertSnackbar}
                       />
                     </Box>
                   </Box>
