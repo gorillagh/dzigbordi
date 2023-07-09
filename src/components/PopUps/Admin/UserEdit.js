@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import {
@@ -37,9 +37,7 @@ const UserEdit = (props) => {
     phoneNumber: `0${props.user.phoneNumber.slice(-9)}`,
   });
 
-  const containerRef = React.useRef(null);
-
-  useEffect(() => console.log(props.branches));
+  const containerRef = useRef(null);
 
   const handleDepartmentChange = (e) => {
     const selectedDepartmentId = e.target.value;

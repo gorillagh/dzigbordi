@@ -18,9 +18,16 @@ import _ from "lodash";
 import Subtitle from "../../components/Typography/Subtitle";
 import AddDish from "../../components/Forms/AddDish";
 import { getMenus } from "../../serverFunctions/menu";
-import { getDishes } from "../../serverFunctions/dish";
+import {
+  createDish,
+  deleteDish,
+  getDishes,
+  updateDish,
+} from "../../serverFunctions/dish";
 import { getCategories } from "../../serverFunctions/category";
 import Categories from "../../components/Forms/Categories";
+import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
+import DishEdit from "../../components/PopUps/Admin/DishEdit";
 
 const cardStyle = {
   p: 2,
@@ -36,7 +43,7 @@ const cardStyle = {
     boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
   },
 };
-
+const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const test = {
   Monday: [
     {
@@ -150,31 +157,151 @@ const test = {
 const Menu = (props) => {
   const [loading, setLoading] = useState(false);
   const [addDishLoading, setAddDishLoading] = useState(false);
-  const [menus, setMenus] = useState({ all: [], ...test });
+  const [dishes, setDishes] = useState([]);
+  const [menus, setMenus] = useState({});
+  const [days, setDays] = useState(["all", ...daysOfWeek]);
   const [categories, setCategories] = useState(null);
-  const [openCategories, setOpenCategories] = useState(false);
-  const [selectedMenuGroup, setSelectedMenuGroup] = useState("all");
-  const [addType, setAddType] = useState("categories");
+  const [selectedDay, setSelectedDay] = useState("all");
+  const [addType, setAddType] = useState("dish");
   const [displayAdd, setDisplayAdd] = useState(true);
+  const [selectedDish, setSelectedDish] = useState({});
+  const [openDishEdit, setOpenDishEdit] = useState(false);
 
   const navigate = useNavigate();
-
-  const loadMenus = async () => {
-    const res1 = await getMenus(props.user.token);
-    const res2 = await getDishes(props.user.token);
-    setMenus({ all: [...res2.data], ...res1.data });
-  };
   const loadCategories = async () => {
     const res = await getCategories(props.user.token);
-    setCategories(res.data);
+    if (res) setCategories(res.data);
+  };
+
+  const loadDishes = async () => {
+    try {
+      setLoading(true);
+      const res = await getDishes(props.user.token);
+      if (res.data) {
+        const separatedDishes = {
+          all: res.data,
+          Monday: [],
+          Tuesday: [],
+          Wednesday: [],
+          Thursday: [],
+          Friday: [],
+        };
+        // Separate dishes by day of the week
+        res.data.forEach((dish) => {
+          dish.daysServed.forEach((day) => {
+            if (separatedDishes[day]) {
+              separatedDishes[day].push(dish);
+            }
+          });
+        });
+
+        setMenus(separatedDishes);
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    // loadMenus();
+    loadDishes();
     loadCategories();
   }, []);
 
-  const handleAddDish = async () => {};
+  const handleAddDish = async (dish, handleAddDishSuccess) => {
+    try {
+      setAddDishLoading(true);
+      const res = await createDish(props.user.token, dish);
+
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setAddDishLoading(false);
+        return;
+      }
+
+      loadDishes();
+
+      setAddDishLoading(false);
+      props.setAlertSnackbar({
+        open: true,
+        text: `${res.data.name} added`,
+        severity: "success",
+      });
+      handleAddDishSuccess();
+    } catch (error) {
+      setAddDishLoading(false);
+      console.log(error);
+      // Handle the error
+    }
+  };
+
+  const handleOpenEditDish = (dish) => {
+    setSelectedDish(dish);
+    setOpenDishEdit(true);
+  };
+
+  const handleEditDish = async (selectedDish, handleEditDishSuccess) => {
+    try {
+      setAddDishLoading(true);
+
+      // Make the API call to update the dish
+
+      const res = await updateDish(
+        props.user.token,
+        selectedDish._id,
+        selectedDish
+      );
+
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setAddDishLoading(false);
+        return;
+      }
+      props.setAlertSnackbar({
+        open: true,
+        text: `${res.data.name} updated`,
+        severity: "success",
+      });
+      setAddDishLoading(false);
+      loadDishes();
+      handleEditDishSuccess();
+    } catch (error) {
+      setAddDishLoading(false);
+      console.log(error);
+      // Handle the error
+    }
+  };
+
+  const handleDeleteDish = async (dish) => {
+    try {
+      if (!window.confirm(`Are you sure you want to delete "${dish.name}"`))
+        return;
+
+      setLoading(true);
+      const res = await deleteDish(props.user.token, dish._id);
+      if (res.data.status === "ok") {
+        loadDishes();
+        setLoading(false);
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "success",
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -191,7 +318,7 @@ const Menu = (props) => {
             justifyContent="space-between"
           >
             <PageTitle my={1} title="Menu" />
-            <IconButton size="small" onClick={loadMenus}>
+            <IconButton size="small" onClick={loadDishes}>
               <Icon color="primary" fontSize="small">
                 refresh
               </Icon>
@@ -224,11 +351,9 @@ const Menu = (props) => {
                           fontSize: "0.85rem",
                           boxShadow:
                             "inset 0 0 0 1px rgba(16,22,26,.05), inset 0 -1px 0 rgba(16,22,26,.2)",
-                          bgcolor:
-                            selectedMenuGroup === key ? "#fee5b9" : "#fff",
-                          fontWeight: selectedMenuGroup === key ? 700 : "400",
-                          color:
-                            selectedMenuGroup === key ? "primary.main" : "",
+                          bgcolor: selectedDay === key ? "#fee5b9" : "#fff",
+                          fontWeight: selectedDay === key ? 700 : "400",
+                          color: selectedDay === key ? "primary.main" : "",
                           my: 1,
                           "&:hover": {
                             bgcolor: "#fee5b9",
@@ -236,7 +361,7 @@ const Menu = (props) => {
                         }}
                         fullWidth={false}
                         size="small"
-                        onClick={() => setSelectedMenuGroup(key)}
+                        onClick={() => setSelectedDay(key)}
                       />
                     </Box>
                   ))}
@@ -247,14 +372,11 @@ const Menu = (props) => {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <Subtitle
-                  my={0}
-                  title={`${_.startCase(selectedMenuGroup)} Dishes`}
-                />
+                <Subtitle my={0} title={`${_.startCase(selectedDay)} Dishes`} />
               </Box>
               <Box>
-                {menus && menus[selectedMenuGroup]
-                  ? menus[selectedMenuGroup]
+                {menus && menus[selectedDay]
+                  ? menus[selectedDay]
                       .sort((a, b) => a.code.localeCompare(b.code)) // Sort the dishes alphabetically by name
                       .map((dish, index) => (
                         <Box
@@ -273,7 +395,7 @@ const Menu = (props) => {
                             <Box display="flex" columnGap={1}>
                               <Box>
                                 <Typography variant="body2" fontWeight={500}>
-                                  {dish.code}
+                                  DZ{dish.code}
                                 </Typography>
                                 <Box height={50} width={70}>
                                   <img
@@ -316,7 +438,7 @@ const Menu = (props) => {
                               <IconButton
                                 size="small"
                                 color="error"
-                                // onClick={() => handleDeleteUser(dish)}
+                                onClick={() => handleDeleteDish(dish)}
                               >
                                 <Icon fontSize="small">delete</Icon>
                               </IconButton>
@@ -324,7 +446,7 @@ const Menu = (props) => {
                               <IconButton
                                 size="small"
                                 color="info"
-                                // onClick={() => handleOpenEditUser(dish)}
+                                onClick={() => handleOpenEditDish(dish)}
                               >
                                 <Icon fontSize="small">edit</Icon>
                               </IconButton>
@@ -380,10 +502,13 @@ const Menu = (props) => {
                     <Box display={addType === "dish" ? "block" : "none"}>
                       <AddDish
                         categories={categories}
-                        handleAddUser={handleAddDish}
-                        addUserLoading={addDishLoading}
+                        loadCategories={loadCategories}
+                        handleAddDish={handleAddDish}
+                        addDishLoading={addDishLoading}
                         setAlertSnackbar={props.setAlertSnackbar}
                         open={addType === "dish"}
+                        user={props.user}
+                        daysOfWeek={daysOfWeek}
                       />
                     </Box>
                     <Box display={addType === "categories" ? "block" : "none"}>
@@ -402,6 +527,18 @@ const Menu = (props) => {
             </Grid>
           </Grid>
         </Box>
+        <DishEdit
+          dish={selectedDish}
+          open={openDishEdit}
+          onClose={() => {
+            setSelectedDish(null);
+            setOpenDishEdit(false);
+          }}
+          handleEditDish={handleEditDish}
+          addDishLoading={addDishLoading}
+          setAlertSnackbar={props.setAlertSnackbar}
+        />
+        <LoadingBackdrop open={loading} />
       </Box>
     </div>
   );

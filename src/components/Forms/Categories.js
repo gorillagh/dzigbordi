@@ -104,7 +104,7 @@ const Categories = (props) => {
         setLoading(false);
         props.setAlertSnackbar({
           open: true,
-          text: `${res.data.name} category deleted`,
+          text: `${category.name} category deleted`,
           severity: "success",
         });
       }
@@ -168,7 +168,7 @@ const Categories = (props) => {
           component="form"
           onSubmit={(e) => {
             e.preventDefault();
-            handleCategoryAdd();
+            // handleCategoryAdd(category);
           }}
           sx={{ ...cardStyle }}
         >
@@ -273,7 +273,7 @@ const Categories = (props) => {
                 setOpenCategoryEdit(false);
                 setSelectedCategory(null);
               }}
-              handleDepartmentUpdate={handleCategoryUpdate}
+              handleCategoryUpdate={handleCategoryUpdate}
               loading={updateLoading}
             />
           ) : (

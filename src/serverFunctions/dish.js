@@ -24,7 +24,7 @@ export const getDish = async (id, authtoken) => {
   );
 };
 
-export const createDish = async (data, authtoken) => {
+export const createDish = async (authtoken, data) => {
   return await api.post("/dishes-create", data, {
     headers: {
       authtoken,
@@ -54,7 +54,7 @@ export const updateDish = async (id, data, authtoken) => {
   });
 };
 
-export const deleteDish = async (id, authtoken) => {
+export const deleteDish = async (authtoken, id) => {
   return await api.post(
     `/dishes-delete/${id}`,
     {},

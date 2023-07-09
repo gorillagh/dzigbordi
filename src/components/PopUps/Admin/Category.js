@@ -68,7 +68,7 @@ const Category = (props) => {
                 component="form"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  props.handleBranchUpdate(category);
+                  props.handleCategoryUpdate(category);
                 }}
                 noValidate
               >
@@ -104,7 +104,7 @@ const Category = (props) => {
                     },
                   }}
                   my={2}
-                  onClick={() => props.handleDepartmentUpdate(category)}
+                  onClick={() => props.handleCategoryUpdate(category)}
                 />
               </Box>
             </Box>

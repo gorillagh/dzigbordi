@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Resizer from "react-image-file-resizer";
 import {
   Avatar,
   Badge,
@@ -16,6 +17,8 @@ import {
 } from "@mui/material";
 import ActionButton from "../Buttons/ActionButton";
 import CircularLoading from "../Feedbacks/CircularLoading";
+import DaysSelect from "../Inputs/DaysSelect";
+import { uploadDishImage } from "../../serverFunctions/dish";
 
 const cardStyle = {
   p: 2,
@@ -32,28 +35,47 @@ const cardStyle = {
 const AddDish = (props) => {
   const [dish, setDish] = useState({});
   const [imageLoading, setImageLoading] = useState(false);
-
   const containerRef = React.useRef(null);
 
-  const handleImageUpload = async () => {};
-  const handleDepartmentChange = (e) => {
-    setDish((prevState) => ({
-      ...prevState,
-      department: e.target.value,
-    }));
+  useEffect(() => {
+    props.loadCategories();
+  }, [props.open === true]);
+
+  const handleImageUpload = async (e) => {
+    let files = e.target.files;
+    console.log(files[0]);
+
+    if (files) {
+      setImageLoading(true);
+      //Edit pics
+      Resizer.imageFileResizer(
+        files[0],
+        900,
+        900,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          uploadDishImage(props.user.token, uri)
+            .then((res) => {
+              // console.log('Image Upload Res Data', res)
+              setDish((prevState) => ({ ...prevState, image: res.data.url }));
+              setImageLoading(false);
+            })
+            .catch((error) => {
+              setImageLoading(false);
+              console.log("Image upload error", error);
+            });
+        },
+        "base64"
+      );
+    }
   };
 
-  const handleBranchChange = (e) => {
+  const handleCategoryChange = (e) => {
     setDish((prevState) => ({
       ...prevState,
-      branch: e.target.value,
-    }));
-  };
-
-  const handleRoleChange = (e) => {
-    setDish((prevState) => ({
-      ...prevState,
-      role: e.target.value,
+      category: e.target.value,
     }));
   };
 
@@ -65,42 +87,54 @@ const AddDish = (props) => {
     });
   };
 
-  const handleAddUser = (e) => {
+  const handleAddDish = (e) => {
     e.preventDefault();
+
+    // Validate image
+    if (!dish.image) {
+      showValidationError("Please upload an image");
+      return;
+    }
+
     // Validate Name
-    if (dish.name.trim() === "") {
-      showValidationError("Name is Required");
+    if (!dish.name) {
+      showValidationError("Please enter a name for the dish");
       return;
     }
-    // Validate Phone Number
-    const phoneNumberRegex = /^\d{10}$/;
-    if (!phoneNumberRegex.test(dish.phoneNumber)) {
-      showValidationError("Invalid Phone Number");
+
+    // Validate code
+    if (!dish.code) {
+      showValidationError("Please enter a code for the dish");
       return;
     }
-    dish.phoneNumber = `+233${dish.phoneNumber.slice(-9)}`;
-    // Validate Branch
-    if (dish.branch.trim() === "") {
-      // Display an error message or handle the validation error
-      showValidationError("Branch is required");
+
+    // Validate Days served
+    if (!dish.daysServed || dish.daysServed.length === 0) {
+      showValidationError("Please select at least one day for the dish");
       return;
     }
-    // Validate Department
-    if (dish.department.trim() === "") {
-      showValidationError("Department is required");
+
+    // Validate Categories
+    if (!dish.category) {
+      showValidationError("Please select a category for the dish");
       return;
     }
-    // Validate Role
-    if (dish.role.trim() === "") {
-      showValidationError("Role is required");
-      return;
-    }
-    // You can handle the addUser functionality here or pass it to the parent component as a prop
+    // All validations passed, invoke the addDish functionality
     props.handleAddDish(dish, handleAddDishSuccess);
   };
+
   const handleAddDishSuccess = () => {
     // Reset the form fields
+    setDish({
+      image: "",
+      name: "",
+      code: "",
+      description: "",
+      daysServed: [],
+      category: "",
+    });
   };
+
   return (
     <div>
       <Zoom
@@ -115,7 +149,7 @@ const AddDish = (props) => {
           component="form"
           onSubmit={(e) => {
             e.preventDefault();
-            handleAddUser();
+            handleAddDish();
           }}
           sx={{ ...cardStyle }}
         >
@@ -150,7 +184,7 @@ const AddDish = (props) => {
                 >
                   <Avatar
                     variant="rounded"
-                    // alt={props.user.name && props.user.name}
+                    // alt={props.dish.name && props.dish.name}
                     src={dish.image}
                     sx={{ width: 150, height: 100 }}
                   >
@@ -179,7 +213,7 @@ const AddDish = (props) => {
             placeholder="Name"
             name="name"
             autoComplete="name"
-            disabled={props.addUserLoading}
+            disabled={props.addDishLoading}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -203,12 +237,12 @@ const AddDish = (props) => {
             id="dish-code"
             placeholder="Code"
             name="code"
-            disabled={props.addUserLoading}
-            value={dish.phoneNumber}
+            disabled={props.addDishLoading}
+            value={dish.code}
             onChange={(e) =>
               setDish((prevState) => ({
                 ...prevState,
-                phoneNumber: e.target.value,
+                code: `${e.target.value}`,
               }))
             }
             InputProps={{
@@ -222,61 +256,51 @@ const AddDish = (props) => {
             }}
           />
           <TextField
+            multiline
+            maxRows={4}
+            minRows={2}
             size="small"
             margin="normal"
             required
             fullWidth
+            label="Description"
             id="dish-description"
-            placeholder="description"
             name="description"
-            disabled={props.addUserLoading}
-            value={dish.phoneNumber}
+            disabled={props.addDishLoading}
+            value={dish.description}
             onChange={(e) =>
               setDish((prevState) => ({
                 ...prevState,
-                phoneNumber: e.target.value,
+                description: e.target.value,
               }))
             }
           />
-          <FormControl
-            fullWidth
-            variant="outlined"
-            size="small"
-            sx={{ mb: 3, mt: 2 }}
-            disabled={props.addUserLoading}
-          >
-            <InputLabel id="branch-label">Days Served</InputLabel>
-            <Select
-              labelId="branch-label"
-              value={dish.branch}
-              onChange={handleBranchChange}
-              label="Branch"
-            >
-              {props.categories.map((category) => (
-                <MenuItem key={category._id} value={category._id}>
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <DaysSelect
+            setDish={setDish}
+            dish={dish}
+            const
+            daysOfWeek={props.daysOfWeek}
+          />
 
           <FormControl
             fullWidth
             variant="outlined"
             size="small"
             sx={{ mb: 3 }}
-            disabled={props.addUserLoading}
+            disabled={props.addDishLoading}
           >
             <InputLabel id="role-label">Category</InputLabel>
             <Select
               labelId="role-label"
-              value={dish.role}
-              onChange={handleRoleChange}
+              value={dish.category || ""}
+              onChange={handleCategoryChange}
               label="Role"
             >
-              <MenuItem value="subscriber">Subscriber</MenuItem>
-              <MenuItem value="staff">Staff</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
+              {props.categories.map((category, index) => (
+                <MenuItem key={category._id} value={category._id}>
+                  {category.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Box
@@ -285,7 +309,7 @@ const AddDish = (props) => {
             justifyContent="center"
             alignItems="center"
           >
-            {props.addUserLoading ? (
+            {props.addDishLoading ? (
               <Typography variant="body2" fontWeight={600}>
                 <CircularLoading size={20} thickness={6} />
               </Typography>
@@ -304,7 +328,7 @@ const AddDish = (props) => {
                   },
                 }}
                 my={2}
-                onClick={handleAddUser}
+                onClick={handleAddDish}
               />
             )}
           </Box>
