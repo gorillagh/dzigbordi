@@ -78,44 +78,60 @@ function Navbar(props) {
   return (
     <AppBar position="static" color="inherit" elevation={0}>
       <Container>
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{ display: "flex", justifyContent: "space-between" }}
+        >
           {/* <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} /> */}
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "Ubuntu",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
+          <Box display={{ xs: "none", md: "flex" }} flexDirection="column">
+            <Typography
+              variant="h4"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "Ubuntu",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Dzigbordi
+            </Typography>
+            <Typography fontStyle="italic" variant="body2" fontWeight={400}>
+              Aduane bi y3 guy!
+            </Typography>
+          </Box>
+          <Box
+            display={{ xs: "block", md: "none" }}
+            flexDirection="column"
+            alignItems="center"
           >
-            Dzigbordi
-          </Typography>
-
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "Ubuntu",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Dzigbordi
-          </Typography>
+            <Typography
+              variant="h4"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "flex", md: "none" },
+                flexGrow: 1,
+                fontFamily: "Ubuntu",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Dzigbordi
+            </Typography>
+            <Typography fontStyle="italic" variant="body2" fontWeight={400}>
+              Aduane bi y3 guy!
+            </Typography>
+          </Box>
           {props.user ? (
             <Box
               sx={{

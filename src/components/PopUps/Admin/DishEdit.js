@@ -35,6 +35,8 @@ const style = {
   bgcolor: "background.paper",
   borderRadius: "12px",
   p: 4,
+  height: "75vh",
+  overflowY: "scroll",
 };
 
 const DishEdit = (props) => {

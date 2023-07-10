@@ -29,25 +29,10 @@ import Categories from "../../components/Forms/Categories";
 import LoadingBackdrop from "../../components/Feedbacks/LoadingBackdrop";
 import DishEdit from "../../components/PopUps/Admin/DishEdit";
 
-const cardStyle = {
-  p: 2,
-  my: 3,
-  borderRadius: "12px",
-  background: "rgba(255, 255, 255, 0.9)",
-  backdropFilter: "blur(8.8px)",
-  WebkitBackdropFilter: "blur(8.8px)",
-  boxShadow: "0 4px 30px rgba(0, 0, 0, 0.2)",
-  webkitBackdropFilter: "blur(5px)",
-  boxSizing: "border-box",
-  "&:hover": {
-    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
-  },
-};
-const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
 const Orders = (props) => {
   const [loading, setLoading] = useState(false);
-  const [orders, setOrders] = useState(false);
+  const [orders, setOrders] = useState({});
+  const [orderAdd, setOpenOrderAdd] = useState(false);
 
   const navigate = useNavigate();
 
@@ -75,7 +60,14 @@ const Orders = (props) => {
                 refresh
               </Icon>
             </IconButton>
-          </Box>
+          </Box>{" "}
+          <ActionButton
+            fullWidth={false}
+            variant="outlined"
+            size="small"
+            text="Add Order"
+            onClick={() => setOpenOrderAdd(true)}
+          />
         </Box>
 
         <LoadingBackdrop open={loading} />

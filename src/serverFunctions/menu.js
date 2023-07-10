@@ -1,5 +1,17 @@
 import { api } from "./index";
 
+export const getCurrentDayMenu = async (authtoken) => {
+  return await api.post(
+    "/menus-current-day",
+    {},
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
 export const getMenus = async (authtoken) => {
   return await api.post(
     "/menus",
