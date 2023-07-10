@@ -44,115 +44,6 @@ const cardStyle = {
   },
 };
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-const test = {
-  Monday: [
-    {
-      image:
-        "https://images.bolt.eu/store/2021/2021-03-18/a4bf0ca0-b9bb-4693-9c30-099aa251451a.jpeg",
-      name: "Yam Chips With Grilled Turkey",
-      code: "dz007",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-    {
-      image:
-        "https://images.bolt.eu/store/2021/2021-03-18/a4bf0ca0-b9bb-4693-9c30-099aa251451a.jpeg",
-      name: "Yam Chips With Grilled Pork",
-      code: "dz008",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-  ],
-  Tuesday: [
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Plantain Rice & Palava Sauce",
-      code: "dz0014",
-      daysServed: ["Tuesday", "Thursday"],
-      category: "",
-    },
-    {
-      image: "",
-      name: "French Fries With Grilled Chicken",
-      code: "dz005",
-      daysServed: ["Tuesday", "Thurday"],
-      category: "",
-    },
-  ],
-  Wednesday: [
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Jollof Rice & Grilled Chicken",
-      code: "dz007",
-      daysServed: ["Monday", "Wednesday"],
-      category: "",
-    },
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Waakye & Wele & Egg",
-      code: "dz022",
-      daysServed: ["Wednesday"],
-      category: "",
-    },
-  ],
-  Thursday: [
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Anwa Mo & Beef & Egg & Sausage",
-      code: "dz021",
-      daysServed: ["Thursday"],
-      category: "",
-    },
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Red Red",
-      code: "dz024",
-      daysServed: ["Tuesday", "Thursday"],
-      category: "",
-    },
-  ],
-  Friday: [
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Yam Chips With Grilled Turkey",
-      code: "dz007",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-    {
-      image:
-        "https://images.bolt.eu/store/2021/2021-03-18/a4bf0ca0-b9bb-4693-9c30-099aa251451a.jpeg",
-      name: "Yam Chips With Grilled Pork",
-      code: "dz008",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-  ],
-  all: [
-    {
-      image:
-        "https://simshomekitchen.com/wp-content/uploads/2018/07/IMG_0336-500x375.jpg",
-      name: "Yam Chips With Grilled Turkey",
-      code: "dz007",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-    {
-      image:
-        "https://images.bolt.eu/store/2021/2021-03-18/a4bf0ca0-b9bb-4693-9c30-099aa251451a.jpeg",
-      name: "Yam Chips With Grilled Pork",
-      code: "dz008",
-      daysServed: ["Monday", "Friday"],
-      category: "",
-    },
-  ],
-};
 
 const Menu = (props) => {
   const [loading, setLoading] = useState(false);
@@ -164,7 +55,7 @@ const Menu = (props) => {
   const [selectedDay, setSelectedDay] = useState("all");
   const [addType, setAddType] = useState("dish");
   const [displayAdd, setDisplayAdd] = useState(true);
-  const [selectedDish, setSelectedDish] = useState({});
+  const [selectedDish, setSelectedDish] = useState(null);
   const [openDishEdit, setOpenDishEdit] = useState(false);
 
   const navigate = useNavigate();
@@ -241,6 +132,7 @@ const Menu = (props) => {
   };
 
   const handleOpenEditDish = (dish) => {
+    console.log(dish);
     setSelectedDish(dish);
     setOpenDishEdit(true);
   };
@@ -248,9 +140,6 @@ const Menu = (props) => {
   const handleEditDish = async (selectedDish, handleEditDishSuccess) => {
     try {
       setAddDishLoading(true);
-
-      // Make the API call to update the dish
-
       const res = await updateDish(
         props.user.token,
         selectedDish._id,
@@ -527,17 +416,25 @@ const Menu = (props) => {
             </Grid>
           </Grid>
         </Box>
-        <DishEdit
-          dish={selectedDish}
-          open={openDishEdit}
-          onClose={() => {
-            setSelectedDish(null);
-            setOpenDishEdit(false);
-          }}
-          handleEditDish={handleEditDish}
-          addDishLoading={addDishLoading}
-          setAlertSnackbar={props.setAlertSnackbar}
-        />
+        {selectedDish ? (
+          <DishEdit
+            categories={categories}
+            loadCategories={loadCategories}
+            dish={selectedDish}
+            open={openDishEdit}
+            onClose={() => {
+              setSelectedDish(null);
+              setOpenDishEdit(false);
+            }}
+            handleEditDish={handleEditDish}
+            addDishLoading={addDishLoading}
+            setAlertSnackbar={props.setAlertSnackbar}
+            daysOfWeek={daysOfWeek}
+            user={props.user}
+          />
+        ) : (
+          ""
+        )}
         <LoadingBackdrop open={loading} />
       </Box>
     </div>

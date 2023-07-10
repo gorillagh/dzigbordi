@@ -46,7 +46,7 @@ export const uploadDishImage = async (authtoken, uri) => {
   );
 };
 
-export const updateDish = async (id, data, authtoken) => {
+export const updateDish = async (authtoken, id, data) => {
   return await api.post(`/dishes-update/${id}`, data, {
     headers: {
       authtoken,

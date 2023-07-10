@@ -38,7 +38,9 @@ const UserEdit = (props) => {
   });
 
   const containerRef = useRef(null);
-
+  useEffect(() => {
+    console.log(selectedUser);
+  }, []);
   const handleDepartmentChange = (e) => {
     const selectedDepartmentId = e.target.value;
     const selectedDepartment = props.departments.find(
@@ -231,12 +233,12 @@ const UserEdit = (props) => {
                   <InputLabel id="branch-label">Branch</InputLabel>
                   <Select
                     labelId="branch-label"
-                    value={selectedUser.branch._id}
+                    value={selectedUser.branch && selectedUser.branch._id}
                     onChange={handleBranchChange}
                     label="Branch"
                   >
-                    {props.branches.map((branch) => (
-                      <MenuItem key={branch._id} value={branch._id}>
+                    {props.branches.map((branch, index) => (
+                      <MenuItem key={index} value={branch._id}>
                         {branch.name}
                       </MenuItem>
                     ))}
