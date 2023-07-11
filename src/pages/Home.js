@@ -60,17 +60,16 @@ const Home = (props) => {
             title={`${currentDayMenu && currentDayMenu.day} Menu`}
           />
         </Box>
-        <Box width={{ xs: "100%", md: "70%" }} mx="auto">
-          {currentDayMenu.dishes ? (
-            <DishCard
-              dishes={currentDayMenu.dishes}
-              handleDishSelect={handleDishSelect}
-              cart={cart}
-            />
-          ) : (
-            ""
-          )}
-        </Box>
+
+        {currentDayMenu.dishes ? (
+          <DishCard
+            dishes={currentDayMenu.dishes}
+            handleDishSelect={handleDishSelect}
+            cart={cart}
+          />
+        ) : (
+          ""
+        )}
       </Container>
       <LoadingBackdrop open={loading} />
     </Box>

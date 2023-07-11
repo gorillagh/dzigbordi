@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Badge } from "@mui/material";
+import _ from "lodash";
 
 const cardStyle = {
   p: 2,
@@ -18,92 +19,57 @@ const cardStyle = {
   boxSizing: "border-box",
   "&:hover": {
     boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+    cursor: "pointer",
   },
 };
 const DishCard = (props) => {
   return (
-    <Box style={{ ...cardStyle }}>
+    <Box>
       {props.dishes &&
-        props.dishes.map((d, i) => {
-          return (
-            <Box key={i}>
-              <Grid
-                sx={{ cursor: "pointer" }}
-                container
-                spacing={2}
-                onClick={() => props.handleDishSelect(d)}
-                alignItems="center"
-              >
-                <Grid item xs={5}>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="right"
-                    width="100%"
-                  >
-                    <Badge
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      sx={{
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                      // badgeContent={dishNumber}
-                      color="primary"
-                    >
-                      <Box
-                        height={{
-                          xs: "100px",
-                          md: "120px",
-                        }}
-                      >
-                        <img
-                          style={{
-                            borderRadius: "12px",
-                            height: "100%",
-                            width: "100%",
-                          }}
-                          alt="dish"
-                          src={d.image}
-                        />
-                      </Box>
-                    </Badge>
+        props.dishes
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((dish, index) => (
+            <Box
+              key={index}
+              sx={{ ...cardStyle }}
+              width={{ xs: "100%", md: "70%" }}
+              mx="auto"
+            >
+              <Box display="flex" columnGap={1} alignItems="center">
+                {/* <Box> */}
+                <Box height={80} width={100} borderRadius="12px">
+                  <img
+                    src={dish.image}
+                    alt={dish.name}
+                    height="80px"
+                    width="100px"
+                    style={{ borderRadius: "12px" }}
+                  />
+                </Box>
+                <Box display="flex" flexDirection="column" rowGap={1}>
+                  <Typography fontWeight={500}>
+                    {_.startCase(dish.name)}
+                  </Typography>
+                  {dish.description ? (
+                    <Typography variant="body2" fontWeight={400}>
+                      {dish.description}
+                    </Typography>
+                  ) : (
+                    ""
+                  )}
+                  <Box display="flex" alignItems="center" columnGap={0.5}>
+                    {dish.daysServed.map((day, index) => (
+                      <Typography variant="body2">
+                        {day.substring(0, 3)}
+                        {index + 1 === dish.daysServed.length ? "." : ", "}
+                      </Typography>
+                    ))}
                   </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={7}
-                  // md={4}
-                  sx={{
-                    // borderLeft: selected ? 4 : 0,
-                    // borderLeftColor: selected ? "primary.main" : "",
-                    boxSizing: "border-box",
-                    pr: 1,
-                  }}
-                >
-                  <Typography fontWeight={600}>{d.name}</Typography>
-                  <Typography variant="body2" fontWeight={400}>
-                    {d.daysServed.map((day, index) => day)}
-                  </Typography>
-
-                  <Typography
-                    maxHeight="36.60px"
-                    my={0.5}
-                    overflow="hidden"
-                    textOverflow="ellipsis"
-                    variant="body2"
-                    color="text.secondary"
-                  >
-                    {d.description}
-                  </Typography>
-                </Grid>
-              </Grid>
-              {i === props.dishes.length - 1 ? "" : <Divider sx={{ my: 2 }} />}
+                </Box>
+                {/* </Box> */}
+              </Box>
             </Box>
-          );
-        })}
+          ))}
     </Box>
   );
 };

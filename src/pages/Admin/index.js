@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import Subtitle from "../../components/Typography/Subtitle";
+import { getSummary } from "../../serverFunctions/order";
 
 const cardStyle = {
   px: 2,
@@ -39,10 +40,26 @@ const loadingSkeletons = [1, 2, 3, 4];
 
 const Dashboard = (props) => {
   const [loading, setLoading] = useState(false);
-  const [summaryLoading, setsummaryLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
   const [summary, setSummary] = useState(null);
 
   const navigate = useNavigate();
+
+  const loadSummary = async () => {
+    try {
+      setSummaryLoading(true);
+      const res = await getSummary(props.user.token);
+      if (res) setSummary(res.data);
+      setSummaryLoading(false);
+    } catch (error) {
+      setSummaryLoading(false);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadSummary();
+  }, []);
 
   return (
     <div>
@@ -113,11 +130,11 @@ const Dashboard = (props) => {
                 <Box display="flex">
                   <Subtitle
                     color={
-                      summary && summary.ordersInfo.uncompletedNumber > 0
+                      summary && summary.ordersInfo.upComing > 0
                         ? "secondary"
                         : ""
                     }
-                    title={summary ? summary.ordersInfo.uncompletedNumber : 0}
+                    title={summary ? summary.ordersInfo.upComing : 0}
                     my={0}
                   />
                 </Box>
@@ -133,10 +150,7 @@ const Dashboard = (props) => {
                   All:{" "}
                 </Typography>
 
-                <Subtitle
-                  title={summary ? summary.ordersInfo.allTimeOrdersNumber : 0}
-                  my={0}
-                />
+                <Subtitle title={summary ? summary.ordersInfo.all : 0} my={0} />
               </Box>
             </Box>
           </Grid>
@@ -178,7 +192,7 @@ const Dashboard = (props) => {
                   Categories:
                 </Typography>
                 <Subtitle
-                  title={summary ? summary.menuInfo.drinksTotal : 0}
+                  title={summary ? summary.menuInfo.categoriesTotal : 0}
                   my={0}
                 />
               </Box>
@@ -243,7 +257,7 @@ const Dashboard = (props) => {
             </Box>
           </Grid>
 
-          {/* ////////////REPORTS SECTION///////////////////////////// */}
+          {/* ////////////Bank SECTION///////////////////////////// */}
           <Grid item xs={6} md={3}>
             <Box sx={{ ...cardStyle }} onClick={() => navigate("/admin/bank")}>
               <Box
@@ -267,11 +281,7 @@ const Dashboard = (props) => {
                   Branches:{" "}
                 </Typography>
                 <Subtitle
-                  title={
-                    summary && summary.reportsInfo
-                      ? summary.reportsInfo.todayReports
-                      : 0
-                  }
+                  title={summary ? summary.bankInfo.branchesTotal : 0}
                   my={0}
                 />
               </Box>
@@ -285,11 +295,7 @@ const Dashboard = (props) => {
                   Departments:{" "}
                 </Typography>
                 <Subtitle
-                  title={
-                    summary && summary.reportsInfo
-                      ? summary.reportsInfo.todayReports
-                      : 0
-                  }
+                  title={summary ? summary.bankInfo.departmentsTotal : 0}
                   my={0}
                 />
               </Box>

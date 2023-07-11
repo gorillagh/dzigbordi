@@ -1,5 +1,17 @@
 import { api } from "./index";
 
+export const getSummary = async (authtoken) => {
+  return await api.post(
+    "/summary",
+    {},
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
 export const getOrders = async (authtoken) => {
   return await api.post(
     "/orders",
