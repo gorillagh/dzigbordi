@@ -7,11 +7,14 @@ import { Container, Typography } from "@mui/material";
 import { getCurrentDayMenu } from "../serverFunctions/menu";
 import Subtitle from "../components/Typography/Subtitle";
 import DishCard from "../components/Cards/DishCard";
+import OrderConfirmation from "../components/PopUps/OrderComfirmation";
 
 const Home = (props) => {
   const [loading, setLoading] = useState(false);
   const [currentDayMenu, setCurrentDayMenu] = useState({});
   const [cart, setCart] = useState({});
+  const [openOrderConfirmation, setOpenOrderConfirmation] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
 
   const loadDayMenu = async () => {
     try {
@@ -63,6 +66,8 @@ const Home = (props) => {
 
         {currentDayMenu.dishes ? (
           <DishCard
+            setSelectedDish={setSelectedDish}
+            setOpenOrderConfirmation={setOpenOrderConfirmation}
             dishes={currentDayMenu.dishes}
             handleDishSelect={handleDishSelect}
             cart={cart}
@@ -71,6 +76,21 @@ const Home = (props) => {
           ""
         )}
       </Container>
+      {selectedDish ? (
+        <OrderConfirmation
+          currentDayMenu={currentDayMenu}
+          open={openOrderConfirmation}
+          onClose={() => {
+            setOpenOrderConfirmation(false);
+            setSelectedDish(null);
+          }}
+          user={props.user}
+          dish={selectedDish}
+          setAlertSnackbar={props.setAlertSnackbar}
+        />
+      ) : (
+        ""
+      )}
       <LoadingBackdrop open={loading} />
     </Box>
   );

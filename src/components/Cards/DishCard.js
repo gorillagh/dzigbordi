@@ -23,6 +23,11 @@ const cardStyle = {
   },
 };
 const DishCard = (props) => {
+  const handleSelectedDish = (dish) => {
+    props.setSelectedDish(dish);
+    props.setOpenOrderConfirmation(true);
+  };
+
   return (
     <Box>
       {props.dishes &&
@@ -34,6 +39,7 @@ const DishCard = (props) => {
               sx={{ ...cardStyle }}
               width={{ xs: "100%", md: "70%" }}
               mx="auto"
+              onClick={() => handleSelectedDish(dish)}
             >
               <Box display="flex" columnGap={1} alignItems="center">
                 {/* <Box> */}
