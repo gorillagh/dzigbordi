@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 
 import LoadingBackdrop from "../components/Feedbacks/LoadingBackdrop";
-import { Container, Typography } from "@mui/material";
+import { Container, TextField, Typography } from "@mui/material";
 import { getCurrentDayMenu } from "../serverFunctions/menu";
 import Subtitle from "../components/Typography/Subtitle";
 import DishCard from "../components/Cards/DishCard";
@@ -15,6 +15,7 @@ const Home = (props) => {
   const [cart, setCart] = useState({});
   const [openOrderConfirmation, setOpenOrderConfirmation] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   const loadDayMenu = async () => {
     try {
@@ -63,9 +64,27 @@ const Home = (props) => {
             title={`${currentDayMenu && currentDayMenu.day} Menu`}
           />
         </Box>
-
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          width={{ xs: "80%", md: "50%" }}
+          mx="auto"
+        >
+          <TextField
+            label="Search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            variant="outlined"
+            fullWidth
+            // margin="normal"
+            size="small"
+          />
+        </Box>
         {currentDayMenu.dishes ? (
           <DishCard
+            searchText={searchText}
+            setSearchText={setSearchText}
             setSelectedDish={setSelectedDish}
             setOpenOrderConfirmation={setOpenOrderConfirmation}
             dishes={currentDayMenu.dishes}

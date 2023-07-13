@@ -5,9 +5,12 @@ import {
   Grid,
   Icon,
   IconButton,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
   Switch,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -57,6 +60,9 @@ const Menu = (props) => {
   const [displayAdd, setDisplayAdd] = useState(true);
   const [selectedDish, setSelectedDish] = useState(null);
   const [openDishEdit, setOpenDishEdit] = useState(false);
+  const [sortBy, setSortBy] = useState("code");
+
+  const [searchText, setSearchText] = useState("");
 
   const navigate = useNavigate();
   const loadCategories = async () => {
@@ -256,17 +262,59 @@ const Menu = (props) => {
                   ))}
               </Box>
               <Box
-                my={1}
+                my={2}
                 display="flex"
                 alignItems="center"
+                columnGap={3}
                 justifyContent="space-between"
               >
                 <Subtitle my={0} title={`${_.startCase(selectedDay)} Dishes`} />
               </Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <TextField
+                  label="Search"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  variant="outlined"
+                  fullWidth={false}
+                  // margin="normal"
+                  size="small"
+                />
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  columnGap={1}
+                  // justifyContent="space-between"
+                >
+                  {" "}
+                  <Typography variant="body2">Sort by:</Typography>
+                  <Select
+                    size="small"
+                    value={sortBy || ""}
+                    onChange={(e) => setSortBy(e.target.value)}
+                  >
+                    <MenuItem key="1" value="code">
+                      Code
+                    </MenuItem>
+                    <MenuItem key="2" value="name">
+                      Name
+                    </MenuItem>
+                  </Select>
+                </Box>
+              </Box>
               <Box>
                 {menus && menus[selectedDay]
                   ? menus[selectedDay]
-                      .sort((a, b) => a.code.localeCompare(b.code)) // Sort the dishes alphabetically by name
+                      .filter((dish) =>
+                        dish.name
+                          .toLowerCase()
+                          .includes(searchText.toLowerCase())
+                      )
+                      .sort((a, b) => a[sortBy].localeCompare(b[sortBy]))
                       .map((dish, index) => (
                         <Box
                           key={index}
@@ -302,7 +350,7 @@ const Menu = (props) => {
                               >
                                 {" "}
                                 <Typography variant="body1" fontWeight={500}>
-                                  {_.startCase(dish.name)}
+                                  {dish.name}
                                 </Typography>
                                 <Typography variant="body2">
                                   {dish.daysServed.map(

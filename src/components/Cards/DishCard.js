@@ -32,6 +32,9 @@ const DishCard = (props) => {
     <Box>
       {props.dishes &&
         props.dishes
+          .filter((dish) =>
+            dish.name.toLowerCase().includes(props.searchText.toLowerCase())
+          )
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((dish, index) => (
             <Box
@@ -53,9 +56,7 @@ const DishCard = (props) => {
                   />
                 </Box>
                 <Box display="flex" flexDirection="column" rowGap={1}>
-                  <Typography fontWeight={500}>
-                    {_.startCase(dish.name)}
-                  </Typography>
+                  <Typography fontWeight={500}>{dish.name}</Typography>
                   {dish.description ? (
                     <Typography variant="body2" fontWeight={400}>
                       {dish.description}

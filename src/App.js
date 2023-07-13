@@ -115,8 +115,10 @@ const App = () => {
           open={openPhoneNumber}
           onClose={() => setOpenPhoneNumber(false)}
           setUser={setUser}
+          user={user}
         />
       </Suspense>
+
       <Routes>
         <Route
           exact
