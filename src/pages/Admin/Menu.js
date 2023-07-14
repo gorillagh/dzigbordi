@@ -198,6 +198,12 @@ const Menu = (props) => {
     }
   };
 
+  function customStartCase(sentence) {
+    const words = _.words(sentence);
+    const convertedWords = words.map((word) => _.capitalize(word));
+    return convertedWords.join(" ");
+  }
+
   return (
     <div>
       <Box>
@@ -350,7 +356,11 @@ const Menu = (props) => {
                               >
                                 {" "}
                                 <Typography variant="body1" fontWeight={500}>
-                                  {dish.name}
+                                  {dish.name
+                                    .toLowerCase()
+                                    .replace(/\b\w/g, (match) =>
+                                      match.toUpperCase()
+                                    )}
                                 </Typography>
                                 <Typography variant="body2">
                                   {dish.daysServed.map(

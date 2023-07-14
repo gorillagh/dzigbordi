@@ -44,19 +44,20 @@ const DishCard = (props) => {
               mx="auto"
               onClick={() => handleSelectedDish(dish)}
             >
-              <Box display="flex" columnGap={1} alignItems="center">
+              <Box
+                display="flex"
+                columnGap={1}
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 {/* <Box> */}
-                <Box height={80} width={100} borderRadius="12px">
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    height="80px"
-                    width="100px"
-                    style={{ borderRadius: "12px" }}
-                  />
-                </Box>
+
                 <Box display="flex" flexDirection="column" rowGap={1}>
-                  <Typography fontWeight={500}>{dish.name}</Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {dish.name
+                      .toLowerCase()
+                      .replace(/\b\w/g, (match) => match.toUpperCase())}
+                  </Typography>
                   {dish.description ? (
                     <Typography variant="body2" fontWeight={400}>
                       {dish.description}
@@ -72,6 +73,15 @@ const DishCard = (props) => {
                       </Typography>
                     ))}
                   </Box>
+                </Box>
+                <Box height={80} width={100} borderRadius="12px">
+                  <img
+                    src={dish.image}
+                    alt={dish.name}
+                    height="80px"
+                    width="100px"
+                    style={{ borderRadius: "12px" }}
+                  />
                 </Box>
                 {/* </Box> */}
               </Box>
