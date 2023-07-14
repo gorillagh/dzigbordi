@@ -3,7 +3,13 @@ import React, { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 
 import LoadingBackdrop from "../components/Feedbacks/LoadingBackdrop";
-import { Container, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Container,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { getCurrentDayMenu } from "../serverFunctions/menu";
 import Subtitle from "../components/Typography/Subtitle";
 import DishCard from "../components/Cards/DishCard";
@@ -20,6 +26,7 @@ const Home = (props) => {
   const loadDayMenu = async () => {
     try {
       const res = await getCurrentDayMenu(props.user.token);
+
       if (res) setCurrentDayMenu(res.data);
     } catch (error) {
       setLoading(false);
@@ -58,41 +65,66 @@ const Home = (props) => {
             {props.user.name},
           </Typography>
         </Box>
-        <Box mb={3}>
-          <Subtitle
-            textAlign="center"
-            title={`${currentDayMenu && currentDayMenu.day} Menu`}
-          />
-        </Box>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          width={{ xs: "80%", md: "50%" }}
-          mx="auto"
-        >
-          <TextField
-            label="Search"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            variant="outlined"
-            fullWidth
-            // margin="normal"
-            size="small"
-          />
-        </Box>
-        {currentDayMenu.dishes ? (
-          <DishCard
-            searchText={searchText}
-            setSearchText={setSearchText}
-            setSelectedDish={setSelectedDish}
-            setOpenOrderConfirmation={setOpenOrderConfirmation}
-            dishes={currentDayMenu.dishes}
-            handleDishSelect={handleDishSelect}
-            cart={cart}
-          />
+        {(currentDayMenu && currentDayMenu.day === "Saturday") ||
+        currentDayMenu === "Sunday" ? (
+          <Box my={5}>
+            <Typography fontWeight="bold" textAlign="center">
+              Menu Not Available For {currentDayMenu.day}!
+            </Typography>
+          </Box>
         ) : (
-          ""
+          <>
+            <Box mb={3}>
+              <Subtitle
+                textAlign="center"
+                title={`${currentDayMenu && currentDayMenu.day} Menu`}
+              />
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                my={2}
+              >
+                <Alert
+                  severity="success"
+                  sx={{ width: { xs: "70%", md: "40%" } }}
+                  variant="filled"
+                >
+                  You have placed an order for {currentDayMenu.day}
+                </Alert>
+              </Box>
+            </Box>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width={{ xs: "80%", md: "50%" }}
+              mx="auto"
+            >
+              <TextField
+                label="Search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                variant="outlined"
+                fullWidth
+                // margin="normal"
+                size="small"
+              />
+            </Box>
+            {currentDayMenu.dishes ? (
+              <DishCard
+                searchText={searchText}
+                setSearchText={setSearchText}
+                setSelectedDish={setSelectedDish}
+                setOpenOrderConfirmation={setOpenOrderConfirmation}
+                dishes={currentDayMenu.dishes}
+                handleDishSelect={handleDishSelect}
+                cart={cart}
+              />
+            ) : (
+              ""
+            )}
+          </>
         )}
       </Container>
       {selectedDish ? (

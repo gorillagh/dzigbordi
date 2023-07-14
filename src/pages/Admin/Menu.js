@@ -198,11 +198,46 @@ const Menu = (props) => {
     }
   };
 
-  function customStartCase(sentence) {
-    const words = _.words(sentence);
-    const convertedWords = words.map((word) => _.capitalize(word));
-    return convertedWords.join(" ");
-  }
+  const handleRemoveFromDayMenu = async (dish, day) => {
+    try {
+      if (
+        !window.confirm(
+          `Are you sure you want to remove "${dish.name}" from "${day}" Menu?`
+        )
+      )
+        return;
+      setLoading(true);
+      // Remove the specified day from dish.daysServed
+      const updatedDays = dish.daysServed.filter((d) => d !== day);
+
+      // Update the dish with the new daysServed array
+      const updatedDish = { ...dish, daysServed: updatedDays };
+
+      // Call the updateDish function to update the dish in the server
+      const res = await updateDish(props.user.token, dish._id, updatedDish);
+
+      if (res.data.status === "false") {
+        props.setAlertSnackbar({
+          open: true,
+          text: res.data.message,
+          severity: "error",
+        });
+        setLoading(false);
+        return;
+      }
+      props.setAlertSnackbar({
+        open: true,
+        text: `${res.data.name} removed from ${day} Menu`,
+        severity: "success",
+      });
+      setLoading(false);
+      loadDishes();
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+      // Handle the error
+    }
+  };
 
   return (
     <div>
@@ -272,7 +307,7 @@ const Menu = (props) => {
                 display="flex"
                 alignItems="center"
                 columnGap={3}
-                justifyContent="space-between"
+                justifyContent="center"
               >
                 <Subtitle my={0} title={`${_.startCase(selectedDay)} Dishes`} />
               </Box>
@@ -385,9 +420,16 @@ const Menu = (props) => {
                               <IconButton
                                 size="small"
                                 color="error"
-                                onClick={() => handleDeleteDish(dish)}
+                                onClick={() => {
+                                  if (selectedDay === "all")
+                                    handleDeleteDish(dish);
+                                  else
+                                    handleRemoveFromDayMenu(dish, selectedDay);
+                                }}
                               >
-                                <Icon fontSize="small">delete</Icon>
+                                <Icon fontSize="small">
+                                  {selectedDay === "all" ? "delete" : "close"}
+                                </Icon>
                               </IconButton>
 
                               <IconButton

@@ -91,20 +91,13 @@ const OrderConfirmation = (props) => {
                 </IconButton>
               </Box>
 
-              <Box display="flex" columnGap={1} alignItems="center">
-                {/* <Box> */}
-                <Box height={80} width={100} borderRadius="12px">
-                  <img
-                    src={props.dish.image}
-                    alt={props.dish.name}
-                    height="80px"
-                    width="100px"
-                    style={{ borderRadius: "12px" }}
-                  />
-                </Box>
+              <Box display="flex" columnGap={1} alignItems="center" my={2}>
+                {/* <Box> */}{" "}
                 <Box display="flex" flexDirection="column" rowGap={1}>
                   <Typography fontWeight={500}>
-                    {_.startCase(props.dish.name)}
+                    {props.dish.name
+                      .toLowerCase()
+                      .replace(/\b\w/g, (match) => match.toUpperCase())}
                   </Typography>
                   {props.dish.description ? (
                     <Typography variant="body2" fontWeight={400}>
@@ -113,6 +106,15 @@ const OrderConfirmation = (props) => {
                   ) : (
                     ""
                   )}
+                </Box>
+                <Box height={80} width={100} borderRadius="12px">
+                  <img
+                    src={props.dish.image}
+                    alt={props.dish.name}
+                    height="80px"
+                    width="100px"
+                    style={{ borderRadius: "12px" }}
+                  />
                 </Box>
               </Box>
 
@@ -170,7 +172,7 @@ const OrderConfirmation = (props) => {
                     </Grid>
                     <Grid item xs={8}>
                       <Typography
-                        variant="h4"
+                        variant="h5"
                         textAlign="center"
                         fontWeight={500}
                       >
@@ -204,56 +206,41 @@ const OrderConfirmation = (props) => {
                 </Box>
               </Box>
 
-              <Box my={2}>
+              <Box display="flex" flexDirection="column" gap={1} my={2}>
                 {/* /////////User information/////////////// */}
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      columnGap={1}
-                      mb={2}
-                    >
-                      <Typography variant="body2" fontWeight={400}>
-                        Name:
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {props.user.name}
-                      </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Typography variant="body2" fontWeight={400}>
-                        Phone:
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {`0${props.user.phoneNumber.slice(-9)}`}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      columnGap={1}
-                      mb={2}
-                    >
-                      <Typography variant="body2" fontWeight={400}>
-                        Branch:
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {props.user.branch && props.user.branch.name}
-                      </Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" columnGap={1}>
-                      <Typography variant="body2" fontWeight={400}>
-                        Department:
-                      </Typography>
-                      <Typography variant="body2" fontWeight={500}>
-                        {props.user.department && props.user.department.name}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
+                <Box display="flex" alignItems="center" columnGap={1}>
+                  <Typography variant="body2" fontWeight={400}>
+                    Name:
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {props.user.name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" columnGap={1}>
+                  <Typography variant="body2" fontWeight={400}>
+                    Phone:
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {`0${props.user.phoneNumber.slice(-9)}`}
+                  </Typography>
+                </Box>
+
+                <Box display="flex" alignItems="center" columnGap={1}>
+                  <Typography variant="body2" fontWeight={400}>
+                    Branch:
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {props.user.branch && props.user.branch.name}
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" columnGap={1}>
+                  <Typography variant="body2" fontWeight={400}>
+                    Department:
+                  </Typography>
+                  <Typography variant="body2" fontWeight={500}>
+                    {props.user.department && props.user.department.name}
+                  </Typography>
+                </Box>
               </Box>
               <ActionButton text="Place Order" my={0} onClick={handleSubmit} />
             </Box>

@@ -71,16 +71,20 @@ const PhoneNumber = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (
-      props.user &&
-      props.user.phoneNumber &&
-      props.user.name &&
-      props.user.name !== "Customer"
-    ) {
-      setPhoneNumber(props.user.phoneNumber.slice(-9));
-      setUserName(props.user.name);
-    }
+    if (props.user) props.onClose();
   }, [props.user]);
+
+  // useEffect(() => {
+  //   if (
+  //     props.user &&
+  //     props.user.phoneNumber &&
+  //     props.user.name &&
+  //     props.user.name !== "Customer"
+  //   ) {
+  //     setPhoneNumber(props.user.phoneNumber.slice(-9));
+  //     setUserName(props.user.name);
+  //   }
+  // }, [props.user]);
 
   const handleGetCode = async (e) => {
     try {

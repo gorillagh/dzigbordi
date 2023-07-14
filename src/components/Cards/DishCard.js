@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Chip from "@mui/material/Chip";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
@@ -53,7 +53,7 @@ const DishCard = (props) => {
                 {/* <Box> */}
 
                 <Box display="flex" flexDirection="column" rowGap={1}>
-                  <Typography variant="body2" fontWeight={500}>
+                  <Typography variant="body1" fontWeight={500}>
                     {dish.name
                       .toLowerCase()
                       .replace(/\b\w/g, (match) => match.toUpperCase())}
