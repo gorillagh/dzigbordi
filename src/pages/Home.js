@@ -66,7 +66,7 @@ const Home = (props) => {
           </Typography>
         </Box>
         {(currentDayMenu && currentDayMenu.day === "Saturday") ||
-        currentDayMenu === "Sunday" ? (
+        currentDayMenu.day === "Sunday" ? (
           <Box my={5}>
             <Typography fontWeight="bold" textAlign="center">
               Menu Not Available For {currentDayMenu.day}!
