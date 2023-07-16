@@ -375,13 +375,17 @@ const Menu = (props) => {
                                 <Typography variant="body2" fontWeight={500}>
                                   DZ{dish.code}
                                 </Typography>
-                                <Box height={50} width={70}>
-                                  <img
-                                    src={dish.image}
-                                    alt=""
-                                    style={{ width: "100%", height: "100%" }}
-                                  />
-                                </Box>
+                                {dish.image ? (
+                                  <Box height={50} width={70}>
+                                    <img
+                                      src={dish.image}
+                                      alt=""
+                                      style={{ width: "100%", height: "100%" }}
+                                    />
+                                  </Box>
+                                ) : (
+                                  ""
+                                )}
                               </Box>
                               <Box
                                 display="flex"

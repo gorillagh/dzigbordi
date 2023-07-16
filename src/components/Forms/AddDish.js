@@ -90,11 +90,11 @@ const AddDish = (props) => {
   const handleAddDish = (e) => {
     e.preventDefault();
 
-    // Validate image
-    if (!dish.image) {
-      showValidationError("Please upload an image");
-      return;
-    }
+    // // Validate image
+    // if (!dish.image) {
+    //   showValidationError("Please upload an image");
+    //   return;
+    // }
 
     // Validate Name
     if (!dish.name) {

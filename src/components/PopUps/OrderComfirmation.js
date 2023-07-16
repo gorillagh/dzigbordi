@@ -107,15 +107,19 @@ const OrderConfirmation = (props) => {
                     ""
                   )}
                 </Box>
-                <Box height={80} width={100} borderRadius="12px">
-                  <img
-                    src={props.dish.image}
-                    alt={props.dish.name}
-                    height="80px"
-                    width="100px"
-                    style={{ borderRadius: "12px" }}
-                  />
-                </Box>
+                {props.dish.image ? (
+                  <Box height={80} width={100} borderRadius="12px">
+                    <img
+                      src={props.dish.image}
+                      alt={props.dish.name}
+                      height="80px"
+                      width="100px"
+                      style={{ borderRadius: "12px" }}
+                    />
+                  </Box>
+                ) : (
+                  ""
+                )}
               </Box>
 
               <Box>

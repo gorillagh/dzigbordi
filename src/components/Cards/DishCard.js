@@ -74,15 +74,19 @@ const DishCard = (props) => {
                     ))}
                   </Box>
                 </Box>
-                <Box height={80} width={100} borderRadius="12px">
-                  <img
-                    src={dish.image}
-                    alt={dish.name}
-                    height="80px"
-                    width="100px"
-                    style={{ borderRadius: "12px" }}
-                  />
-                </Box>
+                {dish.image ? (
+                  <Box height={80} width={100} borderRadius="12px">
+                    <img
+                      src={dish.image}
+                      alt={dish.name}
+                      height="80px"
+                      width="100px"
+                      style={{ borderRadius: "12px" }}
+                    />
+                  </Box>
+                ) : (
+                  ""
+                )}
                 {/* </Box> */}
               </Box>
             </Box>
