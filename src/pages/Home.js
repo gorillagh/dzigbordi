@@ -76,9 +76,13 @@ const Home = (props) => {
           <>
             <Box mb={3}>
               <Subtitle
+                my={0}
                 textAlign="center"
                 title={`${currentDayMenu && currentDayMenu.day} Menu`}
               />
+              <Typography textAlign="center" variant="body2" fontWeight={400}>
+                ({currentDayMenu.date})
+              </Typography>
               <Box
                 display="flex"
                 alignItems="center"
@@ -90,7 +94,8 @@ const Home = (props) => {
                   sx={{ width: { xs: "70%", md: "40%" } }}
                   variant="filled"
                 >
-                  You have placed an order for {currentDayMenu.day}
+                  You have placed an order for {currentDayMenu.day} (
+                  {currentDayMenu.date})
                 </Alert>
               </Box>
             </Box>
@@ -100,6 +105,7 @@ const Home = (props) => {
               justifyContent="center"
               width={{ xs: "80%", md: "50%" }}
               mx="auto"
+              my={2}
             >
               <TextField
                 label="Search"

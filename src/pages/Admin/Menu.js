@@ -34,7 +34,7 @@ import DishEdit from "../../components/PopUps/Admin/DishEdit";
 
 const cardStyle = {
   p: 2,
-  my: 3,
+  my: 1,
   borderRadius: "12px",
   background: "rgba(255, 255, 255, 0.9)",
   backdropFilter: "blur(8.8px)",
@@ -315,6 +315,7 @@ const Menu = (props) => {
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"
+                my={2}
               >
                 <TextField
                   label="Search"

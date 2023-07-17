@@ -9,7 +9,7 @@ import _ from "lodash";
 
 const cardStyle = {
   p: 2,
-  my: 3,
+  my: 1,
   borderRadius: "12px",
   background: "rgba(255, 255, 255, 0.9)",
   backdropFilter: "blur(8.8px)",
