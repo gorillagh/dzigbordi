@@ -36,8 +36,8 @@ export const getOrder = async (id, authtoken) => {
   );
 };
 
-export const createOrder = async (data, authtoken) => {
-  return await api.post("/orders-create", data, {
+export const createOrUpdateOrder = async (data, authtoken) => {
+  return await api.post("/orders-create-or-update", data, {
     headers: {
       authtoken,
     },

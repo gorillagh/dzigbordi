@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import {
+  Alert,
   Grid,
   Icon,
   IconButton,
@@ -14,6 +15,7 @@ import _ from "lodash";
 
 import ActionButton from "../Buttons/ActionButton";
 import LoadingBackdrop from "../Feedbacks/LoadingBackdrop";
+import { createOrUpdateOrder } from "../../serverFunctions/order";
 
 const style = {
   position: "absolute",
@@ -31,6 +33,7 @@ const OrderConfirmation = (props) => {
   const containerRef = React.useRef(null);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState({
+    date: props.currentDayMenu.date,
     orderedBy: props.user._id,
     dish: { _id: props.dish._id, quantity: 1 },
   });
@@ -43,7 +46,9 @@ const OrderConfirmation = (props) => {
         text: `Your ${props.currentDayMenu.day} order has been recieved!`,
         severity: "success",
       });
-      console.log(order);
+      const res = await createOrUpdateOrder(order, props.user.token);
+      props.setHasPlacedOrder(true);
+      setLoading(false);
       props.onClose();
     } catch (error) {
       setLoading(false);
@@ -90,7 +95,27 @@ const OrderConfirmation = (props) => {
                   <Icon>close</Icon>
                 </IconButton>
               </Box>
-
+              <Box
+                display={props.hasPlacedOrder ? "flex" : "none"}
+                alignItems="center"
+                justifyContent="center"
+                my={2}
+              >
+                <Alert
+                  severity="success"
+                  // sx={{ width: { xs: "70%", md: "40%" } }}
+                  variant="outlined"
+                >
+                  You have already placed an order!
+                  <Typography
+                    variant="body2"
+                    textAlign="right"
+                    sx={{ textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    View Order
+                  </Typography>
+                </Alert>
+              </Box>
               <Box display="flex" columnGap={1} alignItems="center" my={2}>
                 {/* <Box> */}{" "}
                 <Box display="flex" flexDirection="column" rowGap={1}>
@@ -246,9 +271,13 @@ const OrderConfirmation = (props) => {
                   </Typography>
                 </Box>
               </Box>
-              <ActionButton text="Place Order" my={0} onClick={handleSubmit} />
+              <ActionButton
+                text={props.hasPlacedOrder ? "Add to my Order" : "Place Order"}
+                my={0}
+                onClick={handleSubmit}
+              />
             </Box>
-            <LoadingBackdrop open={props.loading} />
+            <LoadingBackdrop open={loading} />
           </Box>
         </Zoom>
       </Modal>

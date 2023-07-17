@@ -29,7 +29,7 @@ const DishCard = (props) => {
   };
 
   return (
-    <Box>
+    <Box display={props.display}>
       {props.dishes &&
         props.dishes
           .filter((dish) =>

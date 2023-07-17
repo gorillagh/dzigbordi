@@ -17,6 +17,8 @@ import OrderConfirmation from "../components/PopUps/OrderComfirmation";
 
 const Home = (props) => {
   const [loading, setLoading] = useState(false);
+  const [hasPlacedOrder, setHasPlacedOrder] = useState(false);
+  const [orderList, setOrderList] = useState({});
   const [currentDayMenu, setCurrentDayMenu] = useState({});
   const [cart, setCart] = useState({});
   const [openOrderConfirmation, setOpenOrderConfirmation] = useState(false);
@@ -25,9 +27,26 @@ const Home = (props) => {
 
   const loadDayMenu = async () => {
     try {
+      setLoading(true);
       const res = await getCurrentDayMenu(props.user.token);
 
-      if (res) setCurrentDayMenu(res.data);
+      if (res) {
+        setCurrentDayMenu(res.data);
+        console.log(res.data.orders);
+
+        // Check if props.user._id can be found in res.data.orders
+        const userOrder = res.data.orders.find(
+          (order) => order.orderedBy === props.user._id
+        );
+
+        if (userOrder && userOrder.dishes.length > 0) {
+          setHasPlacedOrder(true);
+        } else {
+          setHasPlacedOrder(false);
+        }
+      }
+
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -84,10 +103,11 @@ const Home = (props) => {
                 ({currentDayMenu.date})
               </Typography>
               <Box
-                display="flex"
+                display={hasPlacedOrder ? "flex" : "none"}
                 alignItems="center"
                 justifyContent="center"
                 my={2}
+                sx={{ cursor: "pointer" }}
               >
                 <Alert
                   severity="success"
@@ -96,6 +116,13 @@ const Home = (props) => {
                 >
                   You have placed an order for {currentDayMenu.day} (
                   {currentDayMenu.date})
+                  <Typography
+                    variant="body2"
+                    textAlign="right"
+                    sx={{ textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    View Order
+                  </Typography>
                 </Alert>
               </Box>
             </Box>
@@ -117,19 +144,16 @@ const Home = (props) => {
                 size="small"
               />
             </Box>
-            {currentDayMenu.dishes ? (
-              <DishCard
-                searchText={searchText}
-                setSearchText={setSearchText}
-                setSelectedDish={setSelectedDish}
-                setOpenOrderConfirmation={setOpenOrderConfirmation}
-                dishes={currentDayMenu.dishes}
-                handleDishSelect={handleDishSelect}
-                cart={cart}
-              />
-            ) : (
-              ""
-            )}
+            <DishCard
+              display={currentDayMenu.dishes ? "block" : "none"}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              setSelectedDish={setSelectedDish}
+              setOpenOrderConfirmation={setOpenOrderConfirmation}
+              dishes={currentDayMenu.dishes}
+              handleDishSelect={handleDishSelect}
+              cart={cart}
+            />
           </>
         )}
       </Container>
@@ -144,6 +168,8 @@ const Home = (props) => {
           user={props.user}
           dish={selectedDish}
           setAlertSnackbar={props.setAlertSnackbar}
+          hasPlacedOrder={hasPlacedOrder}
+          setHasPlacedOrder={setHasPlacedOrder}
         />
       ) : (
         ""
