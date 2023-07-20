@@ -7,7 +7,7 @@ const ShowOnScroll = (props) => {
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,
     disableHysteresis: true,
-    threshold: 100,
+    threshold: 150,
   });
 
   return (

@@ -10,15 +10,15 @@ import { Box } from "@mui/material";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <Box>
-          <App />
-        </Box>
-      </BrowserRouter>
-    </Provider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <Provider store={store}>
+    <BrowserRouter>
+      <Box>
+        <App />
+      </Box>
+    </BrowserRouter>
+  </Provider>
+  // </React.StrictMode>
 );
 
 reportWebVitals();
